@@ -1,0 +1,178 @@
+import streamlit as st
+import requests,time
+from sec_functions import https_check,ssl_check,domain_check,security_headers_check,indicators_check,DNS_check
+
+
+st.title(" Website Security & Privacy Analysis")
+
+#remove sidebar
+st.markdown("""
+<style>
+[data-testid="stSidebar"] {
+    display: none;
+}
+[data-testid="collapsedControl"] {
+    display: none;
+}
+</style>
+""", unsafe_allow_html=True)
+st.set_page_config(page_title="Analysis Report",layout="wide")
+
+
+#button
+st.markdown("""
+<style>
+
+.stButton > button {
+    background: linear-gradient(
+        135deg,
+        #06B6D4,
+        #00FFAA
+    );
+
+    color: black;
+    border: none;
+    border-radius: 15px;
+
+    padding: 12px 30px;
+
+    font-size: 18px;
+    font-weight: 600;
+    font-family: 'Orbitron';
+
+    box-shadow:
+        0 0 15px rgba(37,99,235,0.5);
+
+    transition: all 0.3s ease;
+}
+
+.stButton > button:hover {
+
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 0 25px rgba(37,99,235,0.8);
+
+}
+
+</style>
+""", unsafe_allow_html=True)
+
+#expanders
+st.markdown("""
+<style>
+
+div[data-testid="stExpander"] {
+    border: 1px solid rgba(0,255,200,0.3) !important;
+    border-radius: 18px !important;
+    background: rgba(20,25,40,0.7) !important;
+    overflow: hidden;
+    margin-bottom: 15px;
+}
+
+div[data-testid="stExpander"] details summary {
+    font-size: 20px !important;
+    font-weight: 600 !important;
+    padding: 18px !important;
+}
+
+div[data-testid="stExpander"] details[open] {
+    background: linear-gradient(
+        90deg,
+        rgba(0,255,200,0.08),
+        rgba(0,100,255,0.03)
+    );
+}
+
+</style>
+""", unsafe_allow_html=True)
+
+#content
+final_url = st.session_state.get("final_url")
+url = st.session_state.get("url")
+
+
+analysis = {}
+
+analysis["https"] = https_check(final_url)
+analysis["ssl"] = ssl_check(final_url)
+analysis["domain"] = domain_check(final_url)
+analysis["headers"] = security_headers_check(final_url)
+analysis["indicators"] = indicators_check(final_url,url)
+analysis["dns"] = DNS_check(final_url)
+
+
+security_score = sum([
+    analysis["https"]["score"],
+    analysis["ssl"]["score"],
+    analysis["domain"]["score"],
+    analysis["headers"]["score"],
+    analysis["indicators"]["score"],
+    analysis["dns"]["score"],
+
+])
+
+
+
+col1,col2 = st.columns(2)
+with col1:
+    st.write(f"{final_url}")
+    st.header("Security Analysis")
+    with st.expander(f"HTTPS Security : {analysis["https"]["https_score"]}"):
+        for k,v in analysis["https"].items():
+            st.write(f"{k} : {v}")
+    with st.expander(f"SSL  : {analysis["ssl"]["ssl_score"]}"):
+        for k,v in analysis["ssl"].items():
+            st.write(f"{k} : {v}")
+    with st.expander(f"Domain check  : {analysis["domain"]["domain_score"]}"):
+        for k,v in analysis["domain"].items():
+            st.write(f"{k} : {v}")
+    with st.expander(f"Headers check  : {analysis["headers"]["security_header_score"]}"):
+        for k,v in analysis["headers"].items():
+            st.write(f"{k} : {v}")
+    with st.expander(f"Indicators check  : {analysis["indicators"]["indicators_score"]}"):
+        for k,v in analysis["indicators"].items():
+            st.write(f"{k} : {v}")
+    with st.expander(f"DNS check  : {analysis["dns"]["DNS_score"]}"):
+        for k,v in analysis["dns"].items():
+            st.write(f"{k} : {v}")
+    st.write(f"""
+    Overall Score : {security_score}/100
+""")
+    
+
+    if security_score >= 80:
+        risk = "🟢 Low Risk"
+        color = "#00c853"
+
+    elif security_score >= 50:
+        risk = "🟡 Medium Risk"
+        color = "#f5b31a"
+
+    else:
+        risk = "🔴 High Risk"
+        color = "#f41e1e"
+
+    st.markdown(f"""
+    <div style="
+        background:{color};
+        padding:18px;
+        border-radius:15px;
+        text-align:center;
+        font-size:24px;
+        font-weight:bold;
+        color:white;
+        margin-top:20px;">
+        {risk}
+    </div><br>
+    """, unsafe_allow_html=True)
+
+
+
+with col2:
+    st.header("Privacy Analysis")
+
+
+
+if st.button("Get in depth analysis"):
+    st.switch_page("pages/details.py")

@@ -1,0 +1,8 @@
+user enter url
+    ⬇
+add https:// if not present
+    ⬇
+check if valid url   ➡️ no, raise invalid url error
+    ⬇ yes
+give analysis
+
