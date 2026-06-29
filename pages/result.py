@@ -1,7 +1,7 @@
 import streamlit as st
 import requests,time
 from sec_functions import https_check,ssl_check,domain_check,security_headers_check,indicators_check,DNS_check
-from priv_functions import cookies_check
+from priv_functions import cookies_check,third_party_trackers_check
 
 st.title(" Website Security & Privacy Analysis")
 
@@ -39,7 +39,8 @@ st.markdown("""
     font-size: 18px;
     font-weight: 600;
     font-family: 'Orbitron';
-
+    text-align: center;
+            
     box-shadow:
         0 0 15px rgba(37,99,235,0.5);
 
@@ -115,9 +116,13 @@ security_score = sum([
 analysis_priv = {}
 
 analysis_priv["cookies"] = cookies_check(final_url)
+analysis_priv["TPT"] = third_party_trackers_check(final_url)
+
 
 privacy_score = sum([
-    analysis_priv["cookies"]["score"]
+    analysis_priv["cookies"]["score"],
+    analysis_priv["TPT"]["score"]
+
 ])
 
 st.write(f"{final_url}")
@@ -182,6 +187,13 @@ with col2:
     with st.expander(f"Cookie score : {analysis_priv["cookies"]["Cookies_score"]}"):
         for k,v in analysis_priv["cookies"].items():
             st.write(f"{k} : {v}")
+    with st.expander(f"TPT score : {analysis_priv["TPT"]["TPT_score"]}"):
+        for k,v in analysis_priv["TPT"].items():
+            st.write(f"{k} : {v}")
+
+    st.write(f"""
+    Overall Score : {privacy_score}/100
+""")
 
     if privacy_score >= 80:
         risk = "🟢 Low Risk"
@@ -216,9 +228,9 @@ st.markdown(
         text-align: center;
     }
     </style>
-    """,
+    """, 
     unsafe_allow_html=True
-)
+    )
 
 if st.button("Get in depth analysis"):
     st.switch_page("pages/details.py")

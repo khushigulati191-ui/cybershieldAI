@@ -40,3 +40,70 @@ def cookies_check(final_url):
         "Third_Party_Cookies": third_party_cookies,
         "First_Party_Cookies": first_party_cookies
     }
+
+def third_party_trackers_check(final_url):
+    import requests
+    from bs4 import BeautifulSoup
+
+    TRACKERS = {
+        "Google Analytics": [
+            "google-analytics.com",
+            "googletagmanager.com",
+            "gtag/js",
+            "analytics.js"
+        ],
+        "Facebook Pixel": [
+            "connect.facebook.net",
+            "fbevents.js"
+        ],
+        "Hotjar": [
+            "hotjar.com",
+            "static.hotjar.com"
+        ],
+        "Mixpanel": [
+            "mixpanel.com"
+        ],
+        "TikTok Pixel": [
+            "analytics.tiktok.com",
+            "tiktok.com"
+        ],
+        "DoubleClick": [
+            "doubleclick.net"
+        ]
+    }
+
+    html = requests.get(final_url, headers={"User-Agent":"Mozilla/5.0"}).text
+    soup = BeautifulSoup(html, "html.parser")
+
+    detected = set()
+
+    for script in soup.find_all("script"):
+        src = script.get("src")
+
+        if not src:
+            continue
+
+        src = src.lower()
+
+        for tracker, signatures in TRACKERS.items():
+            if any(signature in src for signature in signatures):
+                detected.add(tracker)
+
+    count = len(detected)
+
+    if count == 0:
+        score = 25
+    elif count <= 3:
+        score = 15
+    else:
+        score = 5
+
+    return {
+        "score": score,
+        "TPT_score": f"{score}/25",
+        "Tracker Count": count,
+        "Trackers": list(detected)
+    }
+    
+
+    
