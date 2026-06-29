@@ -350,6 +350,8 @@ def DNS_check(final_url):
     except Exception:
         # DNS resolution failed
         DNS_resolves = False
+        Multiple_DNS_records = "not applicable"
+        IP_Addresses = "not applicable"
         
     return {
         "score" : score,

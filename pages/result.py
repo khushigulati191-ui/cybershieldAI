@@ -1,7 +1,7 @@
 import streamlit as st
 import requests,time
 from sec_functions import https_check,ssl_check,domain_check,security_headers_check,indicators_check,DNS_check
-
+from priv_functions import cookies_check
 
 st.title(" Website Security & Privacy Analysis")
 
@@ -112,11 +112,19 @@ security_score = sum([
 
 ])
 
+analysis_priv = {}
+
+analysis_priv["cookies"] = cookies_check(final_url)
+
+privacy_score = sum([
+    analysis_priv["cookies"]["score"]
+])
+
+st.write(f"{final_url}")
 
 
 col1,col2 = st.columns(2)
 with col1:
-    st.write(f"{final_url}")
     st.header("Security Analysis")
     with st.expander(f"HTTPS Security : {analysis["https"]["https_score"]}"):
         for k,v in analysis["https"].items():
@@ -171,8 +179,46 @@ with col1:
 
 with col2:
     st.header("Privacy Analysis")
+    with st.expander(f"Cookie score : {analysis_priv["cookies"]["Cookies_score"]}"):
+        for k,v in analysis_priv["cookies"].items():
+            st.write(f"{k} : {v}")
 
+    if privacy_score >= 80:
+        risk = "🟢 Low Risk"
+        color = "#00c853"
 
+    elif privacy_score >= 50:
+        risk = "🟡 Medium Risk"
+        color = "#f5b31a"
+
+    else:
+        risk = "🔴 High Risk"
+        color = "#f41e1e"
+
+    st.markdown(f"""
+    <div style="
+        background:{color};
+        padding:18px;
+        border-radius:15px;
+        text-align:center;
+        font-size:24px;
+        font-weight:bold;
+        color:white;
+        margin-top:20px;">
+        {risk}
+    </div><br>
+    """, unsafe_allow_html=True)
+
+st.markdown(
+    """
+    <style>
+    div.stButton {
+        text-align: center;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
 
 if st.button("Get in depth analysis"):
     st.switch_page("pages/details.py")
