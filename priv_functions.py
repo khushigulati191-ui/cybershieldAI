@@ -171,3 +171,5 @@ def ads_check(final_url):
         "status": "Advertising networks found" if detected else "No advertising networks detected"
     }
     
+def privacy_policy_check(final_url):
+    pass
