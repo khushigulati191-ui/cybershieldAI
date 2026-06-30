@@ -1,7 +1,7 @@
 import streamlit as st
 import requests,time
 from sec_functions import https_check,ssl_check,domain_check,security_headers_check,indicators_check,DNS_check
-from priv_functions import cookies_check,third_party_trackers_check
+from priv_functions import cookies_check,third_party_trackers_check,ads_check
 
 st.title(" Website Security & Privacy Analysis")
 
@@ -117,11 +117,14 @@ analysis_priv = {}
 
 analysis_priv["cookies"] = cookies_check(final_url)
 analysis_priv["TPT"] = third_party_trackers_check(final_url)
+analysis_priv["ADS"] = ads_check(final_url)
 
 
 privacy_score = sum([
     analysis_priv["cookies"]["score"],
-    analysis_priv["TPT"]["score"]
+    analysis_priv["TPT"]["score"],
+    analysis_priv["ADS"]["score"]
+
 
 ])
 
@@ -189,6 +192,9 @@ with col2:
             st.write(f"{k} : {v}")
     with st.expander(f"TPT score : {analysis_priv["TPT"]["TPT_score"]}"):
         for k,v in analysis_priv["TPT"].items():
+            st.write(f"{k} : {v}")
+    with st.expander(f"ADS score : {analysis_priv["ADS"]["ADS_score"]}"):
+        for k,v in analysis_priv["ADS"].items():
             st.write(f"{k} : {v}")
 
     st.write(f"""

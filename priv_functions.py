@@ -105,5 +105,69 @@ def third_party_trackers_check(final_url):
         "Trackers": list(detected)
     }
     
+def ads_check(final_url):
+    score = 0
+    import requests
+    from bs4 import BeautifulSoup
+    AD_NETWORKS = {
+    "Google Ads": [
+        "googleads.g.doubleclick.net",
+        "adservice.google.com"
+    ],
 
+    "DoubleClick": [
+        "doubleclick.net"
+    ],
+
+    "AdSense": [
+        "pagead2.googlesyndication.com",
+        "googlesyndication.com"
+    ]}
+
+    detected = set()
+
+    try:
+        response = requests.get(final_url, timeout=10)
+        soup = BeautifulSoup(response.text, "html.parser")
+
+        tags = soup.find_all(["script", "iframe", "img", "link"])
+
+        for tag in tags:
+            url = (
+                tag.get("src")
+                or tag.get("href")
+                or ""
+            ).lower()
+
+            for company, domains in AD_NETWORKS.items():
+
+                for domain in domains:
+
+                    if domain in url:
+                        detected.add(company)
+
+    except Exception:
+        return {
+            "score": 0,
+            "detected": [],
+            "status": "Unable to analyze"
+        }
+
+    if len(detected) == 0:
+        score = 15
+    elif len(detected)==1:
+        score = 12
+    elif len(detected) == 2:
+        score = 9
+    elif len(detected) ==3:
+        score = 6
+    else:
+        score = 3
+
+    return {
+        "score": score,
+        "ADS_score" : f"{score}/15",
+        "detected": list(detected),
+        "status": "Advertising networks found" if detected else "No advertising networks detected"
+    }
     
