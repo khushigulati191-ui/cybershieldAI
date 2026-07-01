@@ -12,7 +12,7 @@ def cookies_check(final_url):
     with sync_playwright() as p:
         browser = p.chromium.launch(headless=True)
         page = browser.new_page()
-        page.goto(final_url)
+        page.goto(final_url,wait_until="domcontentloaded",timeout=60000)
         cookies = page.context.cookies()     #cookies is a nested dictionary 
         no_of_cookies = len(cookies)
         if no_of_cookies >15:
@@ -172,4 +172,58 @@ def ads_check(final_url):
     }
     
 def privacy_policy_check(final_url):
-    pass
+    import requests
+    from bs4 import BeautifulSoup
+    from urllib.parse import urljoin
+    score = 0
+    keywords = [
+        "privacy policy",
+        "privacy",
+        "privacy notice",
+        "privacy statement",
+        "data privacy"
+    ]
+
+    try:
+        response = requests.get(final_url, timeout=10)
+        soup = BeautifulSoup(response.text, "html.parser")
+        links = soup.find_all("a")
+
+        found = False
+        accessible = False
+        policy_url = None
+
+        for link in links:
+            text = link.get_text(" ", strip=True).lower()
+            href = (link.get("href") or "").lower()
+
+            for keyword in keywords:
+                if keyword in text or keyword in href:
+                    found = True
+                    accessible = True
+                    policy_url = urljoin(final_url, link.get("href"))
+                    break
+
+            if found:
+                break
+
+        if found:
+            score += 7
+
+        if accessible:
+            score += 3
+
+        return {
+            "score": score,
+            "PPC_score": f"{score}/10",
+            "privacy_policy_found": found,
+            "accessible": accessible,
+            "policy_url": policy_url
+        }
+
+    except Exception as e:
+        return {
+            "score": 0,
+            "PPC_score": f"{score}/10",
+            "error": str(e)
+        }
