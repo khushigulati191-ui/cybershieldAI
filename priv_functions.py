@@ -227,3 +227,97 @@ def privacy_policy_check(final_url):
             "PPC_score": f"{score}/10",
             "error": str(e)
         }
+    
+def data_collection_indicators_check(final_url):
+    score = 0
+    import requests
+    from bs4 import BeautifulSoup
+    TRACKERS = {
+    "googletagmanager.com",
+    "google-analytics.com",
+    "doubleclick.net",
+    "facebook.net",
+    "clarity.ms",
+    "hotjar.com",
+    "segment.com",
+    "mixpanel.com",
+    "amplitude.com",
+}
+    FINGERPRINT_KEYWORDS = [
+    "fingerprintjs",
+    "fingerprint2",
+    "clientjs",
+    "creepjs",
+    "canvasfingerprint",
+]
+    SESSION_REPLAY = [
+    "hotjar",
+    "clarity",
+    "fullstory",
+    "smartlook",
+    "mouseflow",
+    "logrocket",
+    "luckyorange",
+]
+    
+    try:
+        response = requests.get(final_url, timeout=10)
+        soup = BeautifulSoup(response.text, "html.parser")
+        scripts = soup.find_all("script")
+
+        trackers = []
+        fingerprint = []
+        session_replay= []
+
+        trackers_found = False
+        fingerprint_found = False
+        session_replay_found = False
+
+        for script in scripts:
+            src = (script.get("src") or "").lower()
+            for tracker in TRACKERS:
+                if tracker in src:
+                    trackers.append(tracker)
+                    trackers_found = True
+
+            for fingerprint in FINGERPRINT_KEYWORDS:
+                if fingerprint in src:
+                    fingerprint_found = True
+                    fingerprint.append(fingerprint)
+
+            for replay in SESSION_REPLAY:
+                if replay in src:
+                    session_replay_found = True
+                    session_replay.append(replay)
+
+        if len(trackers) == 0:
+            score += 15
+        elif len(trackers) < 3:
+            score += 12
+        elif len(trackers) <= 5:
+            score += 9
+        else:
+            score += 6
+        if fingerprint_found:
+            score -= 3
+        if session_replay_found:
+            score -= 3
+
+        return {
+            "score": score,
+            "data_collection_indicators_score": f"{score}/15",
+            "tracker_count": len(trackers), 
+            "trackers_found": trackers_found,
+            "fingerprint_found": fingerprint_found,
+            "session_replay_found": session_replay_found,
+            "trackers": set(trackers),
+            "fingerprint": set(fingerprint),
+            "session_replay": set(session_replay)
+        }
+        
+    except Exception as e:
+        return {
+            "score": 0,
+            "data_collection_indicators_score": f"{score}/10",
+            "error": str(e)
+        }
