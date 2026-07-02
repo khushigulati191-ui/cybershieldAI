@@ -1,7 +1,7 @@
 import streamlit as st
 import requests,time
 from sec_functions import https_check,ssl_check,domain_check,security_headers_check,indicators_check,DNS_check
-from priv_functions import cookies_check,third_party_trackers_check,ads_check,privacy_policy_check,data_collection_indicators_check,social_media_trackers_check
+from priv_functions import cookies_check,third_party_trackers_check,ads_check,privacy_policy_check,data_collection_indicators_check,social_media_trackers_check,detect_cookie_banner
 
 
 st.title(" Website Security & Privacy Analysis")
@@ -122,6 +122,7 @@ analysis_priv["ADS"] = ads_check(final_url)
 analysis_priv["PPC"] = privacy_policy_check(final_url)
 analysis_priv["DCI"] = data_collection_indicators_check(final_url)
 analysis_priv["SMT"] = social_media_trackers_check(final_url)
+analysis_priv["CB"] = detect_cookie_banner(final_url)
 
 privacy_score = sum([
     analysis_priv["cookies"]["score"],
@@ -129,7 +130,8 @@ privacy_score = sum([
     analysis_priv["ADS"]["score"],
     analysis_priv["PPC"]["score"],
     analysis_priv["DCI"]["score"],
-    analysis_priv["SMT"]["score"]
+    analysis_priv["SMT"]["score"],
+    analysis_priv["CB"]["score"]
 ])
 
 st.write(f"{final_url}")
@@ -209,7 +211,10 @@ with col2:
     with st.expander(f"Social Media Trackers score : {analysis_priv["SMT"]["SMT_score"]}"):
         for k,v in analysis_priv["SMT"].items():
             st.write(f"{k} : {v}")
-            
+    with st.expander(f"Consent Banner score : {analysis_priv["CB"]["CB_score"]}"):
+        for k,v in analysis_priv["CB"].items():
+            st.write(f"{k} : {v}")
+
     st.write(f"""
     Overall Score : {privacy_score}/100
 """)
@@ -253,3 +258,4 @@ st.markdown(
 
 if st.button("Get in depth analysis"):
     st.switch_page("pages/details.py")
+

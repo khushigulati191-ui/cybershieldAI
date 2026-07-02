@@ -1,4 +1,7 @@
 
+from bs4 import BeautifulSoup
+
+
 def cookies_check(final_url):
     score = 0
     session_cookies = []
@@ -436,4 +439,160 @@ def social_media_trackers_check(final_url):
             "score": 0,
             "SMT_score": f"{score}/15",
             "error": str(e)
+        }
+    
+def consent_banner_check(final_url):
+    from bs4 import BeautifulSoup
+
+
+COOKIE_TEXTS = [
+    "cookie",
+    "cookies",
+    "cookie consent",
+    "accept cookies",
+    "reject cookies",
+    "manage cookies",
+    "cookie preferences",
+    "privacy preferences",
+    "allow all cookies",
+]
+
+COOKIE_BUTTONS = [
+    "accept",
+    "accept all",
+    "allow",
+    "allow all",
+    "reject",
+    "decline",
+    "deny",
+    "manage",
+    "manage preferences",
+    "customize",
+    "save preferences",
+]
+
+COOKIE_CLASSES = [
+    "cookie",
+    "cookie-banner",
+    "cookie-consent",
+    "cookie-notice",
+    "consent",
+    "consent-banner",
+    "gdpr",
+    "cc-window",
+    "cc-banner",
+    "onetrust",
+    "cookiebot",
+    "osano",
+    "cookieyes",
+]
+
+
+def detect_cookie_banner(final_url):
+    import requests
+    from bs4 import BeautifulSoup
+    from playwright.sync_api import sync_playwright
+
+    with sync_playwright() as p:
+        browser = p.chromium.launch(headless=True)
+
+        page = browser.new_page()
+
+        page.goto(final_url, wait_until="domcontentloaded", timeout=60000)
+
+        html = page.content()
+
+        browser.close()
+    score = 0
+
+    soup = BeautifulSoup(html, "html.parser")
+    page_text = soup.get_text(" ", strip=True).lower()
+
+    matched_text = None
+    matched_button = None
+    matched_class = None
+
+    # ------------------------------
+    # Check page text
+    # ------------------------------
+
+    for text in COOKIE_TEXTS:
+        if text in page_text:
+            matched_text = text
+            break
+
+    # ------------------------------
+    # Check buttons
+    # ------------------------------
+
+    if matched_text is None:
+
+        for button in soup.find_all("button"):
+
+            btn = button.get_text(" ", strip=True).lower()
+
+            for keyword in COOKIE_BUTTONS:
+
+                if keyword in btn:
+                    matched_button = btn
+                    break
+
+            if matched_button:
+                break
+
+    # ------------------------------
+    # Check IDs and classes
+    # ------------------------------
+
+    if matched_text is None and matched_button is None:
+
+        for tag in soup.find_all(True):
+
+            tag_id = (tag.get("id") or "").lower()
+            tag_classes = " ".join(tag.get("class", [])).lower()
+
+            combined = tag_id + " " + tag_classes
+
+            for keyword in COOKIE_CLASSES:
+
+                if keyword in combined:
+                    matched_class = keyword
+                    break
+
+            if matched_class:
+                break
+
+    # ------------------------------
+    # Decide result
+    # ------------------------------
+
+    found = (
+        matched_text is not None
+        or matched_button is not None
+        or matched_class is not None
+    )
+
+    if found:
+        score = 5
+        return {
+            "score": score,
+            "CB_score": f"{score}/5",
+            "feature": "Cookie Consent Banner",
+            "present": True,
+            "details": {
+                "matched_text": matched_text,
+                "matched_button": matched_button,
+                "matched_class": matched_class,
+            },
+            "message": "Cookie consent mechanism detected."
+        }
+    else:
+        score = 0
+        return {
+            "score": score,
+            "CB_score": f"{score}/5",
+            "feature": "Cookie Consent Banner",
+            "present": False,
+            "details": {},
+            "message": "No cookie consent mechanism detected."
         }
