@@ -1,5 +1,6 @@
 import streamlit as st
 import requests,time
+from pages.background import render_background
 
 # BACKGROUND
 # st.markdown("""
@@ -37,7 +38,7 @@ import requests,time
 # </style>
 # """, unsafe_allow_html=True)
 
-
+render_background()
 
 #TITLE 
 st.markdown("""

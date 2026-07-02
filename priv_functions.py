@@ -203,10 +203,14 @@ def privacy_policy_check(final_url):
             for keyword in keywords:
                 if keyword in text or keyword in href:
                     found = True
-                    accessible = True
                     policy_url = urljoin(final_url, link.get("href"))
-                    break
+                    parent = link.find_parent(["header", "nav", "footer"])
 
+                    if parent:
+                        accessible = True
+
+                    break
+                
             if found:
                 break
 

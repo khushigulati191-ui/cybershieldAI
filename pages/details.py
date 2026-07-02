@@ -1,4 +1,7 @@
 import streamlit as st
+from pages.background import render_background
+
+render_background()
 
 st.title("Detailed Analysis Report")
 
