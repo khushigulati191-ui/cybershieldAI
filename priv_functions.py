@@ -318,6 +318,122 @@ def data_collection_indicators_check(final_url):
     except Exception as e:
         return {
             "score": 0,
-            "data_collection_indicators_score": f"{score}/10",
+            "data_collection_indicators_score": f"{score}/15",
+            "error": str(e)
+        }
+    
+def social_media_trackers_check(final_url):
+    score = 0
+    import requests
+    from bs4 import BeautifulSoup
+    
+    facebook_patterns = [
+    "connect.facebook.net",
+    "fbevents.js",
+    "fbq(",
+    "fbq.",
+    "facebook-jssdk",
+    "fb.init"
+]
+
+    linkedin_patterns = [
+    "snap.licdn.com",
+    "insight.min.js",
+    "_insighttag",
+    "_linkedin_partner_id",
+    "linkedin"
+]
+
+    twitter_patterns = [
+    "static.ads-twitter.com",
+    "analytics.twitter.com",
+    "uwt.js",
+    "twq(",
+    "twq."
+]
+
+    tiktok_patterns = [
+    "analytics.tiktok.com",
+    "business.tiktok.com",
+    "ttq(",
+    "ttq.",
+    "events.js"
+]
+
+    pinterest_patterns = [
+    "s.pinimg.com",
+    "pintrk(",
+    "pintrk.",
+    "ct.pinterest.com"
+]
+
+    snapchat_patterns = [
+    "sc-static.net",
+    "snaptr(",
+    "snaptr.",
+    "tr.snapchat.com"
+]
+    try:
+        response = requests.get(final_url, timeout=10)
+        soup = BeautifulSoup(response.text, "html.parser")
+        scripts = soup.find_all("script")
+
+        trackers = []
+        trackers_found = False
+
+        for script in scripts:
+            src = (script.get("src") or "").lower()
+            for pattern in facebook_patterns:
+                if pattern in src:
+                    trackers.append(pattern)
+                    trackers_found = True
+
+            for pattern in linkedin_patterns:
+                if pattern in src:
+                    trackers.append(pattern)
+                    trackers_found = True
+
+            for pattern in twitter_patterns:
+                if pattern in src:
+                    trackers.append(pattern)
+                    trackers_found = True
+
+            for pattern in tiktok_patterns:
+                if pattern in src:
+                    trackers.append(pattern)
+                    trackers_found = True
+
+            for pattern in pinterest_patterns:
+                if pattern in src:
+                    trackers.append(pattern)
+                    trackers_found = True
+
+            for pattern in snapchat_patterns:
+                if pattern in src:
+                    trackers.append(pattern)
+                    trackers_found = True
+    
+
+        if len(trackers) == 0:
+            score = 15
+        elif len(trackers) == 1:
+            score = 12
+        elif len(trackers) == 2:
+            score = 9
+        elif len(trackers) == 3:
+            score = 6
+        else:
+            score = 3
+
+        return {
+            "score": score,
+            "SMT_score" : f"{score}/15",
+            "detected": list(trackers),
+            "status": "Social media trackers found" if trackers else "No social media trackers detected"
+        }
+    except Exception as e:
+        return {
+            "score": 0,
+            "SMT_score": f"{score}/15",
             "error": str(e)
         }
