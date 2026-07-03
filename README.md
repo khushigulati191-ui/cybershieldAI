@@ -1,7 +1,7 @@
 # CyberShield
 
 ## Overview
-CyberShield is a website security and privacy analyzer that evaluates websites using multiple security parameters and generates an overall trust score.
+CyberShield is a website and app security and privacy analyzer that evaluates websites using multiple security parameters and generates an overall trust score.
 
 ## Features
 
@@ -9,7 +9,7 @@ CyberShield is a website security and privacy analyzer that evaluates websites u
 - Domain Age
 - WHOIS Information
 - SSL Certificate Validation
-- HTTPS Check
+- HTTPS Check`
 - DNS Checks
 - Security Headers
 - Cookie Analysis
