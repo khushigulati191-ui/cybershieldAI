@@ -130,7 +130,7 @@ div.stButton > button > div {
 
 #body
 url = st.text_input(" ", placeholder="Enter Website URL....https://example.com", 
-                    help="Enter the full URL of the website you want to analyze, including http:// or https://")
+                    help="Enter the full URL of the website you want to analyze, or simply type the domain name (e.g., google.com, mit.edu).")
 
 if not url.startswith(("http://", "https://")):
     url = "https://" + url
