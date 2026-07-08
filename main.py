@@ -302,6 +302,75 @@ div[class*="st-key-card_"]:hover {
 </style>
 """, unsafe_allow_html=True)
 
+@st.dialog("Analyze a Website")
+def website_popup():
+    st.write(
+        "Enter a URL and our AI will check it for security, privacy and tracking."
+    )
+
+    url = st.text_input(
+        "Website URL",
+        placeholder="e.g. https://www.example.com"
+    )
+    if url and not (url.startswith("http://") or url.startswith("https://")):
+        url = "https://" + url  
+    
+    try:
+        if st.button("Analyze Website", use_container_width=True,type = "tertiary"):
+            with st.spinner("Analyzing website..."):
+                response = requests.get(url,allow_redirects=True,)
+                final_url = response.url
+                time.sleep(2)  # Simulate AI work
+            st.success("Analysis Complete!")
+            time.sleep(2)
+            st.session_state["final_url"] = final_url
+            st.session_state["url"] = url
+            st.switch_page("pages/result.py")
+    except Exception as e:
+        st.error(f"Please enter a valid website address (e.g., google.com, mit.edu, or https://example.com).")
+        
+
+@st.dialog("Analyze an App")
+def app_popup():
+    app = st.text_input(
+        "App Name",
+        placeholder="e.g. WhatsApp"
+    )
+
+    if st.button("Analyze App", use_container_width=True):
+        st.session_state["app"] = app
+        st.switch_page["pages/app.py"]
+
+@st.dialog("Compare Two Services")
+def compare_popup():
+
+    st.write("Compare two websites or two apps side-by-side.")
+
+    compare_type = st.radio(
+        "What are you comparing?",
+        ["Website", "App"],
+        horizontal=True,
+    )
+
+    col1, col2 = st.columns(2)
+
+    with col1:
+        first = st.text_input(
+            "First",
+            placeholder="e.g. Instagram"
+        )
+
+    with col2:
+        second = st.text_input(
+            "Second",
+            placeholder="e.g. Snapchat"
+        )
+
+    if st.button("Compare", use_container_width=True):
+
+        st.session_state["first"] = first
+        st.session_state["second"] = second
+        st.switch_page("pages/compare.py")
 col1, col2, col3 = st.columns(3,gap = "large")
 with col1:
     st.markdown(
@@ -316,6 +385,12 @@ with col1:
         """,
         unsafe_allow_html=True,
     )
+    if st.button(
+        "Analyze Website",
+        use_container_width=True,):
+        website_popup()
+
+        
 with col2:
     st.markdown(
         f"""
@@ -329,6 +404,11 @@ with col2:
         """,
         unsafe_allow_html=True,
     )
+    if st.button(
+        "Analyse App",
+        use_container_width=True,):
+        app_popup()
+
 with col3:
     st.markdown(
         f"""
@@ -342,14 +422,18 @@ with col3:
         """,
         unsafe_allow_html=True,
     )
+    if st.button(
+        "Compare Now",
+        use_container_width=True,):
+        compare_popup()
 
 #body
 
-url = st.text_input(" ", placeholder="Enter Website URL....https://example.com", 
-                    help="Enter the full URL of the website you want to analyze, or simply type the domain name (e.g., google.com, mit.edu).")
+# url = st.text_input(" ", placeholder="Enter Website URL....https://example.com", 
+#                     help="Enter the full URL of the website you want to analyze, or simply type the domain name (e.g., google.com, mit.edu).")
 
-if not url.startswith(("http://", "https://")):
-    url = "https://" + url
+# if not url.startswith(("http://", "https://")):
+#     url = "https://" + url
 
 
 # -------------------
@@ -362,20 +446,20 @@ if not url.startswith(("http://", "https://")):
 
 
 
-if st.button("Analyze Website",type = "tertiary"):
-    try:
-        with st.spinner("Analyzing website..."):
-            response = requests.get(url,allow_redirects=True,)
-            final_url = response.url
-            time.sleep(2)  # Simulate AI work
+# if st.button("Analyze Website",type = "tertiary"):
+#     try:
+#         with st.spinner("Analyzing website..."):
+#             response = requests.get(url,allow_redirects=True,)
+#             final_url = response.url
+#             time.sleep(2)  # Simulate AI work
             
-        st.success("Analysis Complete!")
-        time.sleep(2)
+#         st.success("Analysis Complete!")
+#         time.sleep(2)
 
-        st.session_state["final_url"] = final_url
-        st.session_state["url"] = url
+#         st.session_state["final_url"] = final_url
+#         st.session_state["url"] = url
 
-        st.switch_page("pages/result.py")
-    except Exception as e:
-        st.error(f"Please enter a valid website address (e.g., google.com, mit.edu, or https://example.com).")
+#         st.switch_page("pages/result.py")
+#     except Exception as e:
+#         st.error(f"Please enter a valid website address (e.g., google.com, mit.edu, or https://example.com).")
         
