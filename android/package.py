@@ -143,7 +143,11 @@ def get_package_name(app_name: str) -> str | None:
 
         if HEADLESS:
             options.add_argument("--headless=new")
-
+        options.add_argument("--headless=new")
+        options.add_argument("--no-sandbox")
+        options.add_argument("--disable-dev-shm-usage")
+        options.add_argument("--disable-gpu")
+        options.add_argument("--window-size=1920,1080")
         options.add_argument("--start-maximized")
         options.add_argument("--disable-notifications")
         options.add_argument("--disable-infobars")
@@ -467,6 +471,16 @@ def get_package_name(app_name: str) -> str | None:
             except WebDriverException:
                 logger.debug("driver.quit() raised while cleaning up.", exc_info=True)
 
+
+def get_latest_version(package_name):
+    import requests
+    from google_play_scraper import app
+    results = app(package_name, lang='en', country='us')
+    version = results.get('version')
+    if not version:
+        version = "Unknown"
+    
+    return version
 
 # if __name__ == "__main__":
 #     result = get_package_name("Instagram")

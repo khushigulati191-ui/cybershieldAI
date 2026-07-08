@@ -5,6 +5,14 @@ from pages.background import render_background
 
 render_background()
 
+st.markdown("""
+<style>
+.block-container {
+    padding-top: 1rem !important;
+}
+</style>
+""", unsafe_allow_html=True)
+
 #button
 st.markdown("""
 <style>
@@ -30,6 +38,7 @@ div.stButton > button > div {
         0 0 15px rgba(37,99,235,0.5);
 
     transition: all 0.3s ease;
+    
 }
 
 .stButton > button:hover {
@@ -54,8 +63,25 @@ if "page" not in st.session_state:
     st.session_state.page = "home"
 
 
+
+
 col1, col2, col3, col4 = st.columns([5, 1, 1, 1])
 
+with col1:
+    st.markdown("""
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Poppins:wght@300;500&display=swap');
+</style>
+            
+<h1 style="
+text-align:left;
+font-family:'Orbitron';
+color:#00FFAA;
+font-size:60px;">
+🛡️ CyberShield AI
+</h1>
+
+""", unsafe_allow_html=True)
 
 with col2:
     if st.button(
@@ -101,41 +127,43 @@ with col4:
         st.rerun()
 
 
-#TITLE 
-st.markdown("""
-<style>
-@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Poppins:wght@300;500&display=swap');
-</style>
+# #TITLE 
+# st.markdown("""
+# <style>
+# @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Poppins:wght@300;500&display=swap');
+# </style>
             
-<h1 style="
-text-align:center;
-font-family:'Orbitron';
-color:#00FFAA;
-font-size:60px;">
-🛡️ CyberShield AI
-</h1>
+# <h1 style="
+# text-align:center;
+# font-family:'Orbitron';
+# color:#00FFAA;
+# font-size:60px;">
+# 🛡️ CyberShield AI
+# </h1>
 
 
-<p style="
-text-align:center;
-font-family:'Poppins';
-font-size:20px;
-color:white;">
-AI-Powered Website Security & Privacy Analysis
-</p>
-<br>
-<br>
-<p style="
-text-align:center;
-font-family:'Poppins';
-font-size:20px;
-color:white;
-margin-top:-20px;">
-Analyze any website for security risks, privacy concerns, trackers,  
-SSL issues, and trust indicators—all explained by AI in simple language
-</p>
-""", unsafe_allow_html=True)
+# <p style="
+# text-align:center;
+# font-family:'Poppins';
+# font-size:20px;
+# color:white;">
+# AI-Powered Website Security & Privacy Analysis
+# </p>
+# <br>
+# <br>
+# <p style="
+# text-align:center;
+# font-family:'Poppins';
+# font-size:20px;
+# color:white;
+# margin-top:-20px;">
+# Analyze any website for security risks, privacy concerns, trackers,  
+# SSL issues, and trust indicators—all explained by AI in simple language
+# </p>
+# """, unsafe_allow_html=True)
 st.set_page_config(page_title="CyberShield AI", page_icon="🛡️", layout="wide")
+
+
 
 st.markdown("""
 <style>
@@ -148,8 +176,172 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
+st.markdown("""
+<style>
+.cs-hero{
+    text-align:center;
+    padding-top:3rem;
+    padding-bottom:3rem;
+}
 
+/* AI-powered badge */
+.cs-eyebrow{
+    display:inline-flex;
+    align-items:center;
+    gap:10px;
 
+    padding:14px 28px;
+    border-radius:999px;
+
+    background:rgba(0,20,35,0.65);
+    border:1px solid rgba(0,229,255,0.25);
+
+    color:#4DD7FF;
+    font-size:20px;
+    font-weight:600;
+    font-family:monospace;
+
+    box-shadow:0 0 20px rgba(0,229,255,0.1);
+}
+
+.cs-eyebrow-dot{
+    width:10px;
+    height:10px;
+    border-radius:50%;
+    background:#00FFAA;
+    display:inline-block;
+    animation: blink 1.5s infinite;
+}
+@keyframes blink{
+    0%,100%{
+        opacity:1;
+        transform:scale(1);
+    }
+    50%{
+        opacity:0.3;
+        transform:scale(1.3);
+    }
+}
+/* Main title */
+.cs-hero h1{
+    font-size:1.5rem;
+    font-weight:800;
+    color:#E5E7EB;
+    margin-top:2rem;
+    margin-bottom:1.5rem;
+    line-height:1.1;
+}
+
+/* Subtitle */
+.cs-hero p{
+    font-size:1.5rem;
+    color: white ;
+    max-width:900px;
+    margin:auto;
+    line-height:1.7;
+    font-text: 'Orbotron', sans-serif;
+    padding-top:1rem;
+}
+</style>
+""", unsafe_allow_html=True)
+
+st.markdown(
+        f"""
+        <div class="cs-hero">
+            <div class="cs-eyebrow">
+                <span class="cs-eyebrow-dot"></span>
+                "AI-Powered Security Intelligence"
+            </div>
+            
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+st.markdown("""
+<style>
+<br>            
+div[class*="st-key-card_"] {
+    background: var(--surface-glass);
+    border: 1px solid var(--border-glass);
+    border-radius: var(--radius-lg);
+    padding: 1.7rem 1.5rem 1.5rem 1.5rem;
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+    height: 100%;
+}
+div[class*="st-key-card_"]:hover {
+    transform: translateY(-4px);
+    border-color: var(--border-glass-hover);
+    box-shadow: 0 14px 40px rgba(34, 211, 238, 0.14);
+}
+.cs-card-icon {
+    width: 50px; height: 50px;
+    display: flex; align-items: center; justify-content: center;
+    border-radius: 14px;
+    background: linear-gradient(135deg, rgba(34, 211, 238, 0.16), rgba(99, 102, 241, 0.16));
+    border: 1px solid var(--border-glass);
+    color: var(--accent-cyan);
+    margin-bottom: 1.1rem;
+}
+.cs-card-title {
+    font-family: var(--font-display);
+    font-size: 1.22rem;
+    font-weight: 600;
+    margin: 0 0 0.5rem 0;
+    color: var(--text-primary);
+}
+.cs-card-desc {
+    font-size: 0.93rem;
+    color: var(--text-secondary);
+    line-height: 1.55;
+    margin-bottom: 1.4rem;
+    min-height: 3.3rem;
+}
+</style>
+""", unsafe_allow_html=True)
+
+col1, col2, col3 = st.columns(3,gap = "large")
+with col1:
+    st.markdown(
+        f"""
+        <div class="cs-card">
+            <div class="cs-card-icon">
+                🔒
+            </div>
+            <h3 class="cs-card-title">Website Analysis</h3>
+            <p class="cs-card-desc">Analyze any website for security, privacy, tracking and trustworthiness.</p>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+with col2:
+    st.markdown(
+        f"""
+        <div class="cs-card">
+            <div class="cs-card-icon">
+                🕵️‍♂️
+            </div>
+            <h3 class="cs-card-title">Mobile App Analysis</h3>
+            <p class="cs-card-desc">Analyze mobile apps for security, privacy, and performance issues.</p>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+with col3:
+    st.markdown(
+        f"""
+        <div class="cs-card">
+            <div class="cs-card-icon">
+                🤖
+            </div>
+            <h3 class="cs-card-title">Compare</h3>
+            <p class="cs-card-desc">Compare two websites or apps side-by-side using AI.</p>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
 
 #body
 
