@@ -325,7 +325,7 @@ def website_popup():
             time.sleep(2)
             st.session_state["final_url"] = final_url
             st.session_state["url"] = url
-            st.switch_page("pages/result.py")
+            st.switch_page("pages/ai_summary.py")
     except Exception as e:
         st.error(f"Please enter a valid website address (e.g., google.com, mit.edu, or https://example.com).")
         
@@ -426,6 +426,24 @@ with col3:
         "Compare Now",
         use_container_width=True,):
         compare_popup()
+
+
+# st.markdown("""
+# <style>
+# @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Poppins:wght@300;500&display=swap');
+# </style>
+# <br>
+# <br>            
+# <h1 style="
+# text-align: center;
+# font-family: 'Orbitron';
+# color: #00FFAA;
+# font-size:35px;">
+# KNOW BEFORE YOU CLICK
+# </h1>
+
+# """, unsafe_allow_html=True)
+
 
 #body
 
