@@ -329,19 +329,26 @@ def website_popup():
             st.session_state["url"] = url
             st.switch_page("pages/ai_summary.py")
     except Exception as e:
-        st.error(f"Please enter a valid website address (e.g., google.com, mit.edu, or https://example.com).")
+        st.error(str(e))
         
 
 @st.dialog("Analyze an App")
 def app_popup():
-    app = st.text_input(
+    os_type = st.radio(
+        "What are you using?",
+        ["Android", "Iphone"],
+        horizontal=True,
+    )
+    app_name = st.text_input(
         "App Name",
         placeholder="e.g. WhatsApp"
     )
-
     if st.button("Analyze App", use_container_width=True):
-        st.session_state["app"] = app
-        st.switch_page["pages/app.py"]
+
+        st.session_state["os_type"] = os_type
+        st.session_state["app_name"] = app_name
+        st.switch_page("pages/app.py")
+    
 
 @st.dialog("Compare Two Services")
 def compare_popup():
@@ -373,6 +380,8 @@ def compare_popup():
         st.session_state["first"] = first
         st.session_state["second"] = second
         st.switch_page("pages/compare.py")
+
+
 col1, col2, col3 = st.columns(3,gap = "large")
 with col1:
     st.markdown(
