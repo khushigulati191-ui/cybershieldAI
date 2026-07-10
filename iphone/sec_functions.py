@@ -63,3 +63,25 @@ def check_update_frequency(metadata):
             "update_status" : update_status,
             "last updated" : f"{days} days before"
         }
+    
+def check_developer_website(metadata):
+    import requests
+
+    website_score = 0
+    website_status = "No Website"
+    seller_url = metadata.get("sellerUrl", "")
+
+    if seller_url:
+        if seller_url.startswith("https://"):
+            website_score = 15
+            website_status = "HTTPS Website"
+
+        elif seller_url.startswith("http://"):
+            website_score = 5
+            website_status = "HTTP Website"
+    return {
+        "score" : website_score,
+        "website_score" : f"{website_score}/15",
+        "status": website_status,
+        "url": seller_url
+    }
