@@ -85,3 +85,40 @@ def check_developer_website(metadata):
         "status": website_status,
         "url": seller_url
     }
+
+def check_permissions_transparency(metadata):
+    description = metadata.get("description", "").lower()
+
+    permission_words = [
+        "camera",
+        "microphone",
+        "location",
+        "contacts",
+        "photos",
+        "notifications"
+    ]
+
+    found = []
+
+    for word in permission_words:
+        if word in description:
+            found.append(word)
+
+    if len(found) >= 3:
+        permission_score = 10
+        permission_status = "Permissions clearly mentioned"
+
+    elif len(found) > 0:
+        permission_score = 5
+        permission_status = "Some permissions mentioned"
+
+    else:
+        permission_score = 0
+        permission_status = "No permissions mentioned"
+
+    return {
+        "score" : permission_score,
+        "permission_score" : f"{permission_score}",
+        "status": permission_status,
+        "found": found
+    }
