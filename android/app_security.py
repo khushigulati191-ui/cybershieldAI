@@ -7,6 +7,7 @@ def metadata(app_name,app_version):
             country="us",
             n_hits=1)
         print(results)
+        data = app(package_name, lang="en", country="in")
 
         APP = results[0]
         official_name = APP["title"]
@@ -37,7 +38,8 @@ def metadata(app_name,app_version):
             "rating": details["score"],
             "updated": details["updatedOn"],
             "description": details["summary"],
-            "privacy_policy": details.get("privacyPolicy")
+            "privacy_policy": details.get("privacyPolicy"),
+            "data" : data
         }
 
     except Exception as e:

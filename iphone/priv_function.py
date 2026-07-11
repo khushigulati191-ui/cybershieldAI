@@ -96,6 +96,5 @@ def analyze_tracking_indicators(metadata):
     return {
         "score": score,
         "tracking indicator" : f"{score}/10",
-        "status": status,
-        
+        "status": status
     }
