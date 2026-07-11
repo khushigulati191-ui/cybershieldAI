@@ -66,7 +66,7 @@ if "page" not in st.session_state:
 
 
 
-
+#headers
 col1, col2, col3, col4 = st.columns([5, 1, 1, 1])
 
 with col1:
@@ -360,20 +360,40 @@ def compare_popup():
         ["Website", "App"],
         horizontal=True,
     )
+    if compare_type == "App":
+        app_type = st.radio(
+        "How do you want to compare?",
+        ["Compare two different apps on same operating system-- android/ios", "Compare one app on two operating system-- android and ios"],
+        horizontal=True,)   
+        if app_type == "Compare two different apps on same operating system-- android/ios":
+            col1, col2 = st.columns(2)
 
-    col1, col2 = st.columns(2)
+            with col1:
+                first = st.text_input(
+                    "First",
+                    placeholder="e.g. Instagram"
+                )
 
-    with col1:
-        first = st.text_input(
-            "First",
-            placeholder="e.g. Instagram"
-        )
+            with col2:
+                second = st.text_input(
+                    "Second",
+                    placeholder="e.g. Snapchat")
+        else:
+            app = st.text_input("App",placeholder = "e.g. Youtube" )
+    else:
+        col1, col2 = st.columns(2)
 
-    with col2:
-        second = st.text_input(
-            "Second",
-            placeholder="e.g. Snapchat"
-        )
+        with col1:
+            first = st.text_input(
+                "First",
+                placeholder="e.g. https://instagram.com"
+            )
+
+        with col2:
+            second = st.text_input(
+                "Second",
+                placeholder="e.g. https://www.snapchat.com"
+            )
 
     if st.button("Compare", use_container_width=True):
 
