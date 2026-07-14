@@ -37,9 +37,3 @@ def get_ios_app_ids(app_name):
 
 
 
-result = get_ios_app_ids("hill climb racing")
-if result:
-    for k,v in result.items():
-        print(f"{k} : {v}")
-else:
-    print("no")

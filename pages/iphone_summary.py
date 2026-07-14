@@ -1,7 +1,8 @@
 import streamlit as st
-from pages.background import render_background
+from background import render_background
 
 render_background()
+
 #remove sidebar
 st.markdown("""
 <style>
@@ -59,4 +60,4 @@ st.markdown("""
 st.write("summary coming soon")
 if st.button("GET DEPTH ANALYSIS", type = "tertiary"):
     
-    st.switch_page("pages/result.py")
+    st.switch_page("pages/iphone_result.py")

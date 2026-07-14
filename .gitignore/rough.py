@@ -1,13 +1,10 @@
-import requests
+from pages.web_result import analysis,analysis_priv,security_score,privacy_score
 
-def get_ios_app(app_name):
-    url = f"https://itunes.apple.com/search?term={app_name}&entity=software&limit=1"
+final_url = "https://instagram.com"
+url = "https://instagram.com"
 
-    response = requests.get(url).json()
 
-    if response["resultCount"] == 0:
-        return None
-
-    return response["results"][0]
-
-print(get_ios_app("Instagram"))
+print(analysis)
+print(analysis_priv)
+print(security_score)
+print(privacy_score)

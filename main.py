@@ -1,6 +1,6 @@
 import streamlit as st
 import requests,time
-from pages.background import render_background
+from background import render_background
 from datetime import datetime, timezone
    
 
@@ -85,7 +85,7 @@ font-size:60px;">
 
 """, unsafe_allow_html=True)
 
-with col2:
+with col3:
     if st.button(
         "Home",
         key="home_btn",
@@ -99,20 +99,6 @@ with col2:
             "<div style='height:3px; background:#00E5FF; border-radius:5px; margin-top:4px;'></div>",
             unsafe_allow_html=True
         )
-
-with col3:
-    if st.button(
-        "Compare",
-        key="compare_btn",
-        use_container_width=True,
-    ):
-        st.session_state.page = "compare"
-        st.markdown(
-            "<div style='height:4px;background:#00E5FF;border-radius:5px;border: 1px solid #00FFAA !important;'></div>",
-            unsafe_allow_html=True
-        )
-        st.switch_page("pages/compare.py")
-        st.rerun()
 
 with col4:
     if st.button(
@@ -129,44 +115,8 @@ with col4:
         st.rerun()
 
 
-# #TITLE 
-# st.markdown("""
-# <style>
-# @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Poppins:wght@300;500&display=swap');
-# </style>
-            
-# <h1 style="
-# text-align:center;
-# font-family:'Orbitron';
-# color:#00FFAA;
-# font-size:60px;">
-# 🛡️ CyberShield AI
-# </h1>
 
-
-# <p style="
-# text-align:center;
-# font-family:'Poppins';
-# font-size:20px;
-# color:white;">
-# AI-Powered Website Security & Privacy Analysis
-# </p>
-# <br>
-# <br>
-# <p style="
-# text-align:center;
-# font-family:'Poppins';
-# font-size:20px;
-# color:white;
-# margin-top:-20px;">
-# Analyze any website for security risks, privacy concerns, trackers,  
-# SSL issues, and trust indicators—all explained by AI in simple language
-# </p>
-# """, unsafe_allow_html=True)
-st.set_page_config(page_title="CyberShield AI", page_icon="🛡️", layout="wide")
-
-
-
+# remove sidebar
 st.markdown("""
 <style>
 [data-testid="stSidebar"] {
@@ -177,6 +127,7 @@ st.markdown("""
 }
 </style>
 """, unsafe_allow_html=True)
+
 
 st.markdown("""
 <style>
@@ -327,7 +278,7 @@ def website_popup():
             time.sleep(2)
             st.session_state["final_url"] = final_url
             st.session_state["url"] = url
-            st.switch_page("pages/ai_summary.py")
+            st.switch_page("pages/web_ai_summary.py")
     except Exception as e:
         st.error(str(e))
         
@@ -344,10 +295,17 @@ def app_popup():
         placeholder="e.g. WhatsApp"
     )
     if st.button("Analyze App", use_container_width=True):
-
+        with st.spinner("Analyzing website..."):
+                time.sleep(2)  # Simulate AI work
+        st.success("Analysis Complete!")
+        time.sleep(2)
         st.session_state["os_type"] = os_type
         st.session_state["app_name"] = app_name
-        st.switch_page("pages/app.py")
+        if os_type == "Iphone":
+            st.switch_page("pages/iphone_summary.py")
+        else:
+            st.switch_page("pages/android_summary.py")
+
     
 
 @st.dialog("Compare Two Services")

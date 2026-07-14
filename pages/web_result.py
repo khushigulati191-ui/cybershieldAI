@@ -2,7 +2,7 @@ import streamlit as st
 import requests,time
 from website.sec_functions import https_check,ssl_check,domain_check,security_headers_check,indicators_check,DNS_check
 from website.priv_functions import cookies_check,third_party_trackers_check,ads_check,privacy_policy_check,data_collection_indicators_check,social_media_trackers_check,detect_cookie_banner
-from pages.background import render_background
+from background import render_background
 
 render_background()
 
@@ -260,4 +260,5 @@ st.markdown(
 
 if st.button("Get in depth analysis"):
     st.switch_page("pages/details.py")
+
 

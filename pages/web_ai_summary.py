@@ -2,9 +2,6 @@ import streamlit as st
 from background import render_background
 
 render_background()
-
-st.title("Detailed Analysis Report")
-
 #remove sidebar
 st.markdown("""
 <style>
@@ -16,6 +13,8 @@ st.markdown("""
 }
 </style>
 """, unsafe_allow_html=True)
+st.set_page_config(page_title="Analysis Report",layout="wide")
+
 
 #button
 st.markdown("""
@@ -37,7 +36,8 @@ st.markdown("""
     font-size: 18px;
     font-weight: 600;
     font-family: 'Orbitron';
-
+    text-align: center;
+            
     box-shadow:
         0 0 15px rgba(37,99,235,0.5);
 
@@ -56,9 +56,7 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-
-st.set_page_config(page_title="Analysis Report",layout="wide")
-
-if st.button("Navigate to home page"):
-    st.switch_page("main.py")
-
+st.write("summary coming soon")
+if st.button("GET DEPTH ANALYSIS", type = "tertiary"):
+    
+    st.switch_page("pages/web_result.py")

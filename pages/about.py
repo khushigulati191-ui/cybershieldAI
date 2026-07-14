@@ -1,5 +1,5 @@
 import streamlit as st
-from pages.background import render_background
+from background import render_background
 render_background()
 
 #remove sidebar

@@ -1,6 +1,6 @@
 import streamlit as st
 import requests,time
-from pages.background import render_background
+from background import render_background
 
 # BACKGROUND
 # st.markdown("""

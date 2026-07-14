@@ -118,7 +118,7 @@ def check_permissions_transparency(metadata):
 
     return {
         "score" : permission_score,
-        "permission_score" : f"{permission_score}",
+        "permission_score" : f"{permission_score}/10",
         "status": permission_status,
         "found": found
     }
