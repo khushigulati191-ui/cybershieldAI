@@ -3,7 +3,7 @@ def PPAv(data):
     score = 0
     Privacy_Policy_Availability = False
     privacy_policy = data.get("privacyPolicy")
-
+    issue = None
     if privacy_policy:
         Privacy_Policy_Availability = True
         score += 30
@@ -13,7 +13,7 @@ def PPAv(data):
         "score" : score,
         "PPA score" : f"{score}/30",
         "Privacy_Policy_Availability" : Privacy_Policy_Availability,
-        "Issue" : issue if issue else None   
+        **({"Issue": issue} if issue else {})
     }
 
 def PPAn(data):
@@ -21,6 +21,8 @@ def PPAn(data):
     privacy_policy = data.get("privacyPolicy")
     privacy_findings = []
     score = 0
+    issue = None
+
     if privacy_policy:
         try:
             r = requests.get(
@@ -67,7 +69,8 @@ def PPAn(data):
         "score" : score,
         "Analysis score" : f"{score}/30",
         "Keyword count" : count if count else None,
-        "Issue" : issue if issue else None
+        "Keywords" : privacy_findings,
+        **({"Issue": issue} if issue else {})
     }
 
 
@@ -75,6 +78,7 @@ def dev_transparency(data):
     import requests
     email = data.get("developerEmail")
     website = data.get("developerWebsite")
+    issue = None
 
     score = 0
     if email and website:
@@ -88,7 +92,7 @@ def dev_transparency(data):
         "transparency score" : f"{score}/10",
         "email" : email if email else None,
         "website" : website if website else None,
-        "Issue" : issue if issue else None
+        **({"Issue": issue} if issue else {})
     }
         
 
@@ -96,6 +100,7 @@ def ads(data):
     import requests
     score = 0
     contains_ads = data.get("containsAds", False)
+    issue = None
 
     if contains_ads:
         score += 5
@@ -105,7 +110,7 @@ def ads(data):
     return {
         "score" : score,
         "Ads score" : f"{score}/15",
-        "Issue" : issue if issue else None
+        **({"Issue": issue} if issue else {})
     }
 
 
@@ -113,6 +118,7 @@ def category_risk(data):
     import requests
     score = 0
     genre = data.get("genre", "Unknown")
+    issue = None
     
     high_risk = [
         "Social",
@@ -140,7 +146,7 @@ def category_risk(data):
     return {
         "score" : score,
         "category score" : f"{score}/15",
-        "Issue" : issue if issue else None
+        **({"Issue": issue} if issue else {})
     }
 
 

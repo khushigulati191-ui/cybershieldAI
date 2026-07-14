@@ -39,7 +39,8 @@ def install_count(data):
     import requests
     import re
     installs = data.get("realInstalls", 0)
-    
+    score = 0
+    issue = None
 
     if installs >= 10000000:
         score += 20
@@ -56,7 +57,7 @@ def install_count(data):
         "score" : score,
         "Install score" : f"{score}/20",
         "Install count" : installs,
-        "Issue" : issue if issue else None
+        **({"Issue": issue} if issue else {})
     }
 
 def community_trust(data):
@@ -65,6 +66,7 @@ def community_trust(data):
     import requests
     import re
     score = 0
+    issue = None
     reviews = data.get("ratings", 0)
     rating = data.get("score", 0)
     if rating >= 4.5 and reviews >= 10000:
@@ -92,7 +94,7 @@ def community_trust(data):
         "score" : score,
         "Community score" : f"{score}/15",
         "Community trust" : f"{confidence} Trust",
-        "Issue" : issue if issue else None,
+        **({"Issue": issue} if issue else {}),
         "Note" : """Confidence indicates how reliable the rating is based on the number of user reviews. 
         It does not guarantee the app is secure or private."""
     }
@@ -103,6 +105,7 @@ def update_frequency(data):
     import requests
     import re
     score = 0
+    issue = None
     updated = data.get("updated")
 
     try:
@@ -123,7 +126,7 @@ def update_frequency(data):
             "score" : score,
             "Update Frequency Score" : f"{score}/15",
             "Days from last updated" : days,
-            "Issue" : issue if issue else None
+            **({"Issue": issue} if issue else {})
         }
     except:
         issue = "Unable to determine update frequency."
@@ -139,6 +142,7 @@ def app_age(data):
     import requests
     import re
     score = 0
+    issue = None
     released = data.get("released")
 
     try:
@@ -158,7 +162,7 @@ def app_age(data):
             return {
                 "score" : score,
                 "Age score" : f"{score}/10",
-                "Issue" : issue if issue else None
+                **({"Issue": issue} if issue else {})
             }
     except:
         pass
@@ -168,6 +172,7 @@ def sus(data):
     from datetime import datetime
     import requests
     import re
+    issue = None
 
     description = data.get("description", "").lower()
     score = 0
@@ -195,8 +200,8 @@ def sus(data):
     return {
         "score" : score,
         "Sus score" : f"{score}/10",
-        "Issue" : issue if issue else None,
-        "Sus words" : found if found else None
+        **({"Issue": issue} if issue else {}),
+        **({"Sus words":found} if found else {})
     }
 
 def transparency(data):
@@ -208,6 +213,7 @@ def transparency(data):
     developer_website = data.get("developerWebsite")
 
     transparency_score = 0
+    issue = None
     https_valid = False
     if developer_email:
         transparency_score += 5
@@ -229,6 +235,6 @@ def transparency(data):
         "score" : transparency_score,
         "transparency_score" : f"{transparency_score}/10",
         "https_valid" : https_valid,
-        "Issue" : issue if issue else None
+        **({"Issue": issue} if issue else {})
     }
             
