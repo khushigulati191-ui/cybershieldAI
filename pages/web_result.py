@@ -258,7 +258,3 @@ st.markdown(
     unsafe_allow_html=True
     )
 
-if st.button("Get in depth analysis"):
-    st.switch_page("pages/details.py")
-
-

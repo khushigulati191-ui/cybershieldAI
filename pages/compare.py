@@ -56,66 +56,6 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-#headers
-col1, col2, col3, col4 = st.columns([5, 1, 1, 1])
+#logic
 
-with col1:
-    st.markdown("""
-<style>
-@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Poppins:wght@300;500&display=swap');
-</style>
-            
-<h1 style="
-text-align:left;
-font-family:'Orbitron';
-color:#00FFAA;
-font-size:60px;">
-🛡️ CyberShield AI
-</h1>
 
-""", unsafe_allow_html=True)
-
-with col2:
-    if st.button(
-        "Home",
-        key="home_btn",
-        use_container_width=True,
-    ):
-        st.session_state.page = "home"
-        
-        st.rerun()
-    if st.session_state.page == "home":
-        st.markdown(
-            "<div style='height:3px; background:#00E5FF; border-radius:5px; margin-top:4px;'></div>",
-            unsafe_allow_html=True
-        )
-
-with col3:
-    if st.button(
-        "Compare",
-        key="compare_btn",
-        use_container_width=True,
-    ):
-        st.session_state.page = "compare"
-        st.markdown(
-            "<div style='height:4px;background:#00E5FF;border-radius:5px;border: 1px solid #00FFAA !important;'></div>",
-            unsafe_allow_html=True
-        )
-        st.switch_page("pages/compare.py")
-        st.rerun()
-
-with col4:
-    if st.button(
-        "About",
-        key="about_btn",
-        use_container_width=True,
-    ):
-        st.session_state.page = "about"
-        st.markdown(
-            "<div style='height:4px;background:#00E5FF;border-radius:5px;border: 1px solid #00FFAA !important;'></div>",
-            unsafe_allow_html=True
-        )
-        st.switch_page("pages/about.py")
-        st.rerun()
-
-st.write("This is the compare page. You can compare the security and privacy analysis of two websites here.")

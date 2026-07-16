@@ -3,10 +3,9 @@ import requests,time
 from background import render_background
 from datetime import datetime, timezone
    
-
-
 render_background()
-
+st.set_page_config(layout="wide")
+#top margin
 st.markdown("""
 <style>
 .block-container {
@@ -107,12 +106,15 @@ with col4:
         use_container_width=True,
     ):
         st.session_state.page = "about"
+        st.rerun()
+    if st.session_state.page == "about":
+        st.switch_page("pages/about.py")
+        st.rerun()
         st.markdown(
             "<div style='height:4px;background:#00E5FF;border-radius:5px;border: 1px solid #00FFAA !important;'></div>",
             unsafe_allow_html=True
         )
-        st.switch_page("pages/about.py")
-        st.rerun()
+        
 
 
 
@@ -280,7 +282,7 @@ def website_popup():
             st.session_state["url"] = url
             st.switch_page("pages/web_ai_summary.py")
     except Exception as e:
-        st.error(str(e))
+        st.error("Please enter a valid url.")
         
 
 @st.dialog("Analyze an App")
@@ -294,19 +296,38 @@ def app_popup():
         "App Name",
         placeholder="e.g. WhatsApp"
     )
-    if st.button("Analyze App", use_container_width=True):
-        with st.spinner("Analyzing website..."):
-                time.sleep(2)  # Simulate AI work
-        st.success("Analysis Complete!")
-        time.sleep(2)
-        st.session_state["os_type"] = os_type
-        st.session_state["app_name"] = app_name
-        if os_type == "Iphone":
-            st.switch_page("pages/iphone_summary.py")
-        else:
-            st.switch_page("pages/android_summary.py")
+    try:
+        if st.button("Analyze App", use_container_width=True):
+            with st.spinner("Analyzing app..."):
+                from google_play_scraper import search
+                from difflib import SequenceMatcher
+                results = search(app_name, n_hits=1)
+                time.sleep(2)
+                found = False
+                for app in results:
+                    similarity = SequenceMatcher(
+                                            None,
+                                            app_name.lower(),
+                                            app["title"].lower()
+                                        ).ratio()
 
-    
+                    if similarity > 0.85:
+                        found = True
+                        break
+                if found:
+                    st.success("Analysis Complete!")
+                    time.sleep(2)
+                    st.session_state["os_type"] = os_type
+                    st.session_state["app_name"] = app_name
+                    if os_type == "Iphone":
+                        st.switch_page("pages/iphone_summary.py")
+                    else:
+                        st.switch_page("pages/android_summary.py")
+                else:
+                    st.error("No such app exists.")
+    except Exception as e:
+        st.error("No such app exists.")
+        
 
 @st.dialog("Compare Two Services")
 def compare_popup():
@@ -316,8 +337,9 @@ def compare_popup():
     compare_type = st.radio(
         "What are you comparing?",
         ["Website", "App"],
-        horizontal=True,
-    )
+        horizontal=True,)
+    st.session_state["compare_type"] = compare_type
+    
     if compare_type == "App":
         app_type = st.radio(
         "How do you want to compare?",
@@ -325,19 +347,21 @@ def compare_popup():
         horizontal=True,)   
         if app_type == "Compare two different apps on same operating system-- android/ios":
             col1, col2 = st.columns(2)
-
+            st.session_state["app_type"] = app_type
             with col1:
                 first = st.text_input(
                     "First",
-                    placeholder="e.g. Instagram"
-                )
+                    placeholder="e.g. Instagram")
 
             with col2:
                 second = st.text_input(
                     "Second",
                     placeholder="e.g. Snapchat")
+            st.session_state["first"] = first
+            st.session_state["second"] = second
         else:
             app = st.text_input("App",placeholder = "e.g. Youtube" )
+            st.session_state["app"] = app
     else:
         col1, col2 = st.columns(2)
 
@@ -350,14 +374,36 @@ def compare_popup():
         with col2:
             second = st.text_input(
                 "Second",
-                placeholder="e.g. https://www.snapchat.com"
-            )
+                placeholder="e.g. https://www.snapchat.com")
+            
+        url1 = first
+        url2 = second
+        if not url1.startswith(("http://", "https://")):
+            url1 = "https://" + url1
+        if not url2.startswith(("http://", "https://")):
+            url2 = "https://" + url2
 
-    if st.button("Compare", use_container_width=True):
+        st.session_state["url1"] = url1
+        st.session_state["url2"] = url2
+        
+        try:
+            if st.button("Compare Now", use_container_width=True,type = "tertiary"):
+                with st.spinner("Analyzing website..."):
+                    response = requests.get(url1,allow_redirects=True,)
+                    final_url1 = response.url
+                    response = requests.get(url2,allow_redirects=True,)
+                    final_url2 = response.url
+                    time.sleep(2)  # Simulate AI work
+                st.success("Analysis Complete!")
+                time.sleep(2)
+                st.session_state["final_url1"] = final_url1
+                st.session_state["final_url2"] = final_url2
 
-        st.session_state["first"] = first
-        st.session_state["second"] = second
-        st.switch_page("pages/compare.py")
+                st.switch_page("pages/compare.py")
+        except Exception as e:
+            st.error(str(e))
+        
+
 
 
 col1, col2, col3 = st.columns(3,gap = "large")
