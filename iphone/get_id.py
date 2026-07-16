@@ -23,6 +23,7 @@ def get_ios_app_ids(app_name):
         apple_id = app.get("trackId")
         lookup_url = f"https://itunes.apple.com/lookup?id={apple_id}"
         metadata = requests.get(lookup_url).json()["results"][0]
+      
         return {
             "app_name": app.get("trackName"),
             "app_store_id": app.get("trackId"),

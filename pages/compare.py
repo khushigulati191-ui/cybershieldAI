@@ -57,5 +57,21 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 #logic
+compare_type = st.session_state.get("compare_type")
+if compare_type == "App":
+    app_type = st.session_state.get("app_type")
+    if app_type == "Compare two different apps on same operating system-- android/ios":
+        os_type = st.session_state.get("os_type")
+        app1 = st.session_state.get("app1")
+        app2 = st.session_state.get("app2")
+        if os_type == "Iphone":
+            st.switch_page("pages/compare2.py")
+        else:
+            st.switch_page("pages/compare3.py")
+    else:
+        st.switch_page("pages/compare4.py")
+        
 
 
+else:
+    st.switch_page("pages/compare1.py")

@@ -345,9 +345,15 @@ def compare_popup():
         "How do you want to compare?",
         ["Compare two different apps on same operating system-- android/ios", "Compare one app on two operating system-- android and ios"],
         horizontal=True,)   
+        st.session_state["app_type"] = app_type
         if app_type == "Compare two different apps on same operating system-- android/ios":
+            os_type = st.radio(
+        "What are you using?",
+        ["Android", "Iphone"],
+        horizontal=True,
+    )
             col1, col2 = st.columns(2)
-            st.session_state["app_type"] = app_type
+            
             with col1:
                 first = st.text_input(
                     "First",
@@ -357,11 +363,65 @@ def compare_popup():
                 second = st.text_input(
                     "Second",
                     placeholder="e.g. Snapchat")
-            st.session_state["first"] = first
-            st.session_state["second"] = second
+            st.session_state["os_type"] = os_type
+            st.session_state["app1"] = first
+            st.session_state["app2"] = second
+            try:
+                if st.button("Analyze App", use_container_width=True):
+                    with st.spinner("Analyzing app..."):
+                        from google_play_scraper import search
+                        from difflib import SequenceMatcher
+                        results1 = search(first, n_hits=1)
+                        time.sleep(2)
+                        found1 = False
+                        for app in results1:
+                            similarity = SequenceMatcher(None,first.lower(),app["title"].lower()).ratio()
+                            if similarity > 0.85:
+                                found1 = True
+                                break
+                        results2 = search(second, n_hits=1)
+                        time.sleep(2)
+                        found2 = False
+                        for app in results2:
+                            similarity = SequenceMatcher(None,second.lower(),app["title"].lower()).ratio()
+                            if similarity > 0.85:
+                                found2 = True
+                                break
+                        if found1 and found2:
+                            st.success("Analysis Complete!")
+                            time.sleep(2)
+                            st.switch_page("pages/compare.py")
+                        else:
+                            st.error("No such app exists.")
+            except Exception as e:
+                st.error(str(e))
+
         else:
             app = st.text_input("App",placeholder = "e.g. Youtube" )
             st.session_state["app"] = app
+            try:
+                if st.button("Analyze App", use_container_width=True):
+                    with st.spinner("Analyzing app..."):
+                        from google_play_scraper import search
+                        from difflib import SequenceMatcher
+                        results1 = search(app, n_hits=1)
+                        time.sleep(2)
+                        found1 = False
+                        for apps in results1:
+                            similarity = SequenceMatcher(None,app.lower(),apps["title"].lower()).ratio()
+                            if similarity > 0.85:
+                                found1 = True
+                                break
+                        if found1:
+                            st.success("Analysis Complete!")
+                            time.sleep(2)
+                            st.switch_page("pages/compare.py")
+                        else:
+                            st.error("No such app exists.")
+            except Exception as e:
+                st.error(str(e))
+
+
     else:
         col1, col2 = st.columns(2)
 

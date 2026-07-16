@@ -31,7 +31,7 @@ def analyze_privacy_labels(metadata):
     }
 
 def analyze_privacy_policy(metadata):
-    policy = metadata.get("privacyPolicyUrl")
+    policy = metadata.get("Privacy policy")
 
     if policy:
         score = 20
@@ -44,7 +44,7 @@ def analyze_privacy_policy(metadata):
 
     else:
         score = 0
-        status = "Privacy Policy Missing"
+        status = "Privacy Policy URL Not Available"
 
     return {
         "score": score,
