@@ -129,6 +129,69 @@ privacy_score = sum([
 
 st.write(f"{app_name} - {os_type}")
 
+pointer_position = 100 - ((security_score + privacy_score) / 2)
+
+st.markdown(f"""
+<style>
+.risk-container {{
+    position: relative;
+    width: 100%;
+    margin-top: 30px;
+}}
+
+.risk-bar {{
+    height: 25px;
+    width: 100%;
+    background: #e5e5e5;
+    border-radius: 8px;
+    overflow: hidden;
+}}
+
+.risk-fill {{
+    height: 100%;
+    background: #009688;
+    border-radius: 8px;
+}}
+
+.risk-pointer {{
+    position: absolute;
+    top: 15px;
+    left: {pointer_position}%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    border-top: 20px solid #333;
+}}
+
+.risk-labels {{
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+    font-size: 16px;
+}}
+</style>
+
+""", unsafe_allow_html=True)
+
+st.markdown(f"""
+<div class="risk-bar">
+    <div class="risk-fill" style="width: {pointer_position}%;"></div>
+</div>
+
+
+
+<div class="risk-labels">
+    <span>Minimal</span>
+    <span>Low</span>
+    <span>Medium</span>
+    <span>High</span>
+    <span>Critical</span>
+</div>
+<br><br>
+
+""", unsafe_allow_html=True)
 
 col1,col2 = st.columns(2)
 with col1:
