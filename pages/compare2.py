@@ -172,7 +172,7 @@ with col1:
         <div class="risk-fill" style="width: {pointer_position}%;"></div>
     </div>
     <div class="risk-labels">
-        <span>Minimal</span>
+        <span>Minimal Risk</span>
         <span>Low</span>
         <span>Medium</span>
         <span>High</span>
@@ -280,7 +280,7 @@ with col2:
         <div class="risk-fill" style="width: {pointer_position}%;"></div>
     </div>
     <div class="risk-labels">
-        <span>Minimal</span>
+        <span>Minimal Risk</span>
         <span>Low</span>
         <span>Medium</span>
         <span>High</span>

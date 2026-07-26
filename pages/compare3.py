@@ -197,7 +197,7 @@ with col1:
             <div class="risk-fill" style="width: {pointer_position}%;"></div>
         </div>
         <div class="risk-labels">
-            <span>Minimal</span>
+            <span>Minimal Risk</span>
             <span>Low</span>
             <span>Medium</span>
             <span>High</span>
@@ -322,14 +322,13 @@ st.markdown(
 
 with col2:
     st.write(f"{app2} - {os_type}")
-    st.header("Security Analysis")
     pointer_position = 100 - ((security_score2 + privacy_score2) / 2)
     st.markdown(f"""
     <div class="risk-bar">
         <div class="risk-fill" style="width: {pointer_position}%;"></div>
     </div>
     <div class="risk-labels">
-        <span>Minimal</span>
+        <span>Minimal Risk</span>
         <span>Low</span>
         <span>Medium</span>
         <span>High</span>
@@ -338,6 +337,8 @@ with col2:
     <br><br>
     
     """, unsafe_allow_html=True)
+    st.header("Security Analysis")
+
     with st.expander(f"Developer Verification Score : {analysis2["developer"]["Developer Score"]}"):
         for k,v in analysis2["developer"].items():
             st.write(f"{k} : {v}")

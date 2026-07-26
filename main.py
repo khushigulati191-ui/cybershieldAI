@@ -280,7 +280,7 @@ def website_popup():
             time.sleep(2)
             st.session_state["final_url"] = final_url
             st.session_state["url"] = url
-            st.switch_page("pages/web_ai_summary.py")
+            st.switch_page("pages/web_result.py")
     except Exception as e:
         st.error("Please enter a valid url.")
         
@@ -301,7 +301,7 @@ def app_popup():
             with st.spinner("Analyzing app..."):
                 from google_play_scraper import search
                 from difflib import SequenceMatcher
-                results = search(app_name, n_hits=5)
+                results = search(app_name, n_hits=10)
                 time.sleep(2)
                 found = False
                 for app in results:
@@ -322,11 +322,11 @@ def app_popup():
                     st.session_state["os_type"] = os_type
                     st.session_state["app_name"] = app_name
                     if os_type == "Iphone":
-                        st.switch_page("pages/iphone_summary.py")
+                        st.switch_page("pages/iphone_result.py")
                     else:
-                        st.switch_page("pages/android_summary.py")
+                        st.switch_page("pages/android_result.py")
                 else:
-                    st.error("No such app exists.")
+                    st.error("No such app found, please enter correct/complete name featured on google play.")
     except Exception as e:
         st.error(str(e))
         
@@ -355,7 +355,7 @@ def compare_popup():
         horizontal=True,
     )
             col1, col2 = st.columns(2)
-            
+
             with col1:
                 first = st.text_input(
                     "First",
@@ -373,7 +373,7 @@ def compare_popup():
                     with st.spinner("Analyzing app..."):
                         from google_play_scraper import search
                         from difflib import SequenceMatcher
-                        results1 = search(first, n_hits=5)
+                        results1 = search(first, n_hits=10)
                         time.sleep(2)
                         found1 = False
                         for app in results1:
@@ -383,7 +383,7 @@ def compare_popup():
                             if similarity > 0.85:
                                 found1 = True
                                 break
-                        results2 = search(second, n_hits=1)
+                        results2 = search(second, n_hits=10)
                         time.sleep(2)
                         found2 = False
                         for app in results2:
@@ -398,7 +398,7 @@ def compare_popup():
                             time.sleep(2)
                             st.switch_page("pages/compare.py")
                         else:
-                            st.error("No such app exists.")
+                            st.error("No such app found, please enter correct/complete name featured on google play.")
             except Exception as e:
                 st.error(str(e))
 
@@ -412,18 +412,18 @@ def compare_popup():
                         from difflib import SequenceMatcher
                         results1 = search(app, n_hits=1)
                         time.sleep(2)
-                        found1 = False
+                        found = False
                         for apps in results1:
                             similarity = SequenceMatcher(None,app.lower(),apps["title"].lower()).ratio()
                             if similarity > 0.85:
-                                found1 = True
+                                found = True
                                 break
-                        if found1:
+                        if found:
                             st.success("Analysis Complete!")
                             time.sleep(2)
                             st.switch_page("pages/compare.py")
                         else:
-                            st.error("No such app exists.")
+                            st.error("No such app found, please enter correct/complete name featured on google play.")
             except Exception as e:
                 st.error(str(e))
 

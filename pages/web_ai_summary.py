@@ -57,6 +57,3 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 st.write("summary coming soon")
-if st.button("GET DEPTH ANALYSIS", type = "tertiary"):
-    
-    st.switch_page("pages/web_result.py")
