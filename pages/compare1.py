@@ -137,12 +137,69 @@ privacy_score2 = sum([
     analysis_priv2["CB"]["score"]
 ])
 
+st.markdown(f"""
+<style>
+.risk-container {{
+    position: relative;
+    width: 100%;
+    margin-top: 30px;
+}}
+
+.risk-bar {{
+    height: 25px;
+    width: 100%;
+    background: #e5e5e5;
+    border-radius: 8px;
+    overflow: hidden;
+}}
+
+.risk-fill {{
+    height: 100%;
+    background: #009688;
+    border-radius: 8px;
+}}
+
+.risk-pointer {{
+    position: absolute;
+    top: 15px;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    border-top: 20px solid #333;
+}}
+
+.risk-labels {{
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+    font-size: 16px;
+}}
+</style>
+
+""", unsafe_allow_html=True)
+
 
 col1,col2 = st.columns(2)
 with col1:
-    st.header("Security Analysis")
     st.write(f"{final_url1}")
+    pointer_position = 100 - ((security_score1 + privacy_score1) / 2)
+    st.markdown(f"""
+<div class="risk-bar">
+    <div class="risk-fill" style="width: {pointer_position}%;"></div>
+</div>
+<div class="risk-labels">
+    <span>Minimal</span>
+    <span>Low</span>
+    <span>Medium</span>
+    <span>High</span>
+    <span>Critical</span>
+</div>
+<br><br>
 
+""", unsafe_allow_html=True)
+    st.header("Security Analysis")
     with st.expander(f"HTTPS Security : {analysis1["https"]["https_score"]}"):
         for k,v in analysis1["https"].items():
             st.write(f"{k} : {v}")
@@ -247,9 +304,23 @@ with col1:
 
 
 with col2:
-    st.header("Security Analysis")
     st.write(f"{final_url2}")
-
+    pointer_position = 100 - ((security_score2 + privacy_score2) / 2)
+    st.markdown(f"""
+    <div class="risk-bar">
+        <div class="risk-fill" style="width: {pointer_position}%;"></div>
+    </div>
+    <div class="risk-labels">
+        <span>Minimal</span>
+        <span>Low</span>
+        <span>Medium</span>
+        <span>High</span>
+        <span>Critical</span>
+    </div>
+    <br><br>
+    
+    """, unsafe_allow_html=True)
+    st.header("Security Analysis")
     with st.expander(f"HTTPS Security : {analysis2["https"]["https_score"]}"):
         for k,v in analysis2["https"].items():
             st.write(f"{k} : {v}")

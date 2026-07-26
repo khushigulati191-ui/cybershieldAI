@@ -301,17 +301,19 @@ def app_popup():
             with st.spinner("Analyzing app..."):
                 from google_play_scraper import search
                 from difflib import SequenceMatcher
-                results = search(app_name, n_hits=1)
+                results = search(app_name, n_hits=5)
                 time.sleep(2)
                 found = False
                 for app in results:
+                    title = app.get("title", "").lower().strip()
+                    search_name = app_name.lower().strip()
                     similarity = SequenceMatcher(
                                             None,
                                             app_name.lower(),
                                             app["title"].lower()
                                         ).ratio()
 
-                    if similarity > 0.85:
+                    if similarity >= 0.70:
                         found = True
                         break
                 if found:
@@ -326,7 +328,7 @@ def app_popup():
                 else:
                     st.error("No such app exists.")
     except Exception as e:
-        st.error("No such app exists.")
+        st.error(str(e))
         
 
 @st.dialog("Compare Two Services")
@@ -371,10 +373,12 @@ def compare_popup():
                     with st.spinner("Analyzing app..."):
                         from google_play_scraper import search
                         from difflib import SequenceMatcher
-                        results1 = search(first, n_hits=1)
+                        results1 = search(first, n_hits=5)
                         time.sleep(2)
                         found1 = False
                         for app in results1:
+                            title = app.get("title", "").lower().strip()
+                            search_name = first.lower().strip()
                             similarity = SequenceMatcher(None,first.lower(),app["title"].lower()).ratio()
                             if similarity > 0.85:
                                 found1 = True
@@ -383,6 +387,8 @@ def compare_popup():
                         time.sleep(2)
                         found2 = False
                         for app in results2:
+                            title = app.get("title", "").lower().strip()
+                            search_name = second.lower().strip()
                             similarity = SequenceMatcher(None,second.lower(),app["title"].lower()).ratio()
                             if similarity > 0.85:
                                 found2 = True

@@ -120,10 +120,68 @@ privacy_score2 = sum([
     analysis_priv2["data"]["score"],
     analysis_priv2["indicators"]["score"]
 ])
+st.markdown(f"""
+<style>
+.risk-container {{
+    position: relative;
+    width: 100%;
+    margin-top: 30px;
+}}
+
+.risk-bar {{
+    height: 25px;
+    width: 100%;
+    background: #e5e5e5;
+    border-radius: 8px;
+    overflow: hidden;
+}}
+
+.risk-fill {{
+    height: 100%;
+    background: #009688;
+    border-radius: 8px;
+}}
+
+.risk-pointer {{
+    position: absolute;
+    top: 15px;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    border-top: 20px solid #333;
+}}
+
+.risk-labels {{
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+    font-size: 16px;
+}}
+</style>
+
+""", unsafe_allow_html=True)
+
 col1,col2 = st.columns(2)
 with col1:
-    st.header("Security Analysis")
     st.write(f"{app1} - {os_type}")
+    pointer_position = 100 - ((security_score1 + privacy_score1) / 2)
+    st.markdown(f"""
+    <div class="risk-bar">
+        <div class="risk-fill" style="width: {pointer_position}%;"></div>
+    </div>
+    <div class="risk-labels">
+        <span>Minimal</span>
+        <span>Low</span>
+        <span>Medium</span>
+        <span>High</span>
+        <span>Critical</span>
+    </div>
+    <br><br>
+    
+    """, unsafe_allow_html=True)
+    st.header("Security Analysis")
 
     with st.expander(f"Developer Verification : {analysis1["developer"]["verification_score"]}"):
         for k,v in analysis1["developer"].items():
@@ -214,8 +272,24 @@ with col1:
 
 
 with col2:
-    st.header("Security Analysis")
     st.write(f"{app2} - {os_type}")
+
+    pointer_position = 100 - ((security_score2 + privacy_score2) / 2)
+    st.markdown(f"""
+    <div class="risk-bar">
+        <div class="risk-fill" style="width: {pointer_position}%;"></div>
+    </div>
+    <div class="risk-labels">
+        <span>Minimal</span>
+        <span>Low</span>
+        <span>Medium</span>
+        <span>High</span>
+        <span>Critical</span>
+    </div>
+    <br><br>
+    
+    """, unsafe_allow_html=True)
+    st.header("Security Analysis")
 
     with st.expander(f"Developer Verification : {analysis2["developer"]["verification_score"]}"):
         for k,v in analysis2["developer"].items():
