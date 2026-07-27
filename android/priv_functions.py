@@ -97,20 +97,27 @@ def dev_transparency(data):
         
 
 def ads(data):
-    import requests
-    score = 0
     contains_ads = data.get("containsAds", False)
-    issue = None
 
     if contains_ads:
-        score += 5
+        score = 5
+        status = "Advertisements Detected"
+        risk_level = "Medium"
         issue = "Application contains advertisements."
     else:
-        score += 15
+        score = 15
+        status = "No Advertisements Detected"
+        risk_level = "Low"
+        issue = None
+
     return {
-        "score" : score,
-        "Ads score" : f"{score}/15",
-        **({"Issue": issue} if issue else {})
+        "score": score,
+        "Advertisement score": f"{score}/15",
+        "status": status,
+        "risk_level": risk_level,
+        "tracking_detected": "Not Verified",
+        "contains_ads": contains_ads,
+        "issue": issue
     }
 
 

@@ -148,7 +148,7 @@ def app_age(data):
     try:
         if released:
             release_date = datetime.strptime(released, "%b %d, %Y")
-            years = (datetime.now() - release_date).days / 365
+            years = round((datetime.now() - release_date).days / 365,2)
 
             if years >= 5:
                 score += 10
@@ -162,11 +162,29 @@ def app_age(data):
             return {
                 "score" : score,
                 "Age score" : f"{score}/10",
+                "App age" : years,
                 **({"Issue": issue} if issue else {})
             }
-    except:
-        pass
+        else:
+            # App release date is not available
+            return {
+                "score": 0,
+                "Age score": "0/10",
+                "App age": "Unknown",
+                "Issue": "Application release date is not available."
+            }
 
+    except Exception as e:
+        return {
+            "score": 0,
+            "ads_score": "0/15",
+            "status": "Advertisement Analysis Failed",
+            "risk_level": "Unknown",
+            "tracking_detected": "Unknown",
+            "contains_ads": "Unknown",
+            "issue": f"Unable to analyze advertisement information: {str(e)}"
+        }
+    
 def sus(data):
     from google_play_scraper import app
     from datetime import datetime

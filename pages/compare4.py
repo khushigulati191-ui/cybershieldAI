@@ -4,7 +4,7 @@ import streamlit as st
 import requests,time
 from iphone.get_id import get_ios_app_ids
 from iphone.sec_functions import check_developer_verification,check_update_frequency,check_developer_website,check_permissions_transparency,analyze_app_age,analyze_account_deletion,analyze_app_popularity
-from iphone.priv_functions import analyze_privacy_labels,analyze_privacy_policy, analyze_data_collection,analyze_tracking_indicators
+from iphone.priv_functions import analyze_privacy_labels,analyze_privacy_policy, analyze_data_collection,analyze_tracking_indicators,analyze_advertisement
 
 from android.package import get_package_name
 from android.get_info import find_metadata
@@ -92,12 +92,15 @@ analysis_priv1["labels"] = analyze_privacy_labels(metadata1)
 analysis_priv1["policy"] = analyze_privacy_policy(metadata1)
 analysis_priv1["data"] = analyze_data_collection(metadata1)
 analysis_priv1["indicators"] = analyze_tracking_indicators(metadata1)
+analysis_priv1["ads"] = analyze_advertisement(metadata1)
+
 
 privacy_score1 = sum([
     analysis_priv1["labels"]["score"],
     analysis_priv1["policy"]["score"],
     analysis_priv1["data"]["score"],
-    analysis_priv1["indicators"]["score"]
+    analysis_priv1["indicators"]["score"],
+    analysis_priv1["ads"]["score"]
 ])
 
 #android
@@ -269,6 +272,9 @@ with col1:
     with st.expander(f"Data Collection Score : {analysis_priv1["data"]["indicator score"]}"):
         for k,v in analysis_priv1["data"].items():
             st.write(f"{k} : {v}")
+    with st.expander(f"Advertisement  Score : {analysis_priv1["ads"]["advertisement_score"]}"):
+                for k,v in analysis_priv1["ads"].items():
+                    st.write(f"{k} : {v}")
     with st.expander(f"Tracking Indicator Score : {analysis_priv1["indicators"]["tracking indicator"]}"):
         for k,v in analysis_priv1["indicators"].items():
             st.write(f"{k} : {v}")
@@ -383,7 +389,7 @@ with col2:
     with st.expander(f"Developer Transparency Score : {analysis_priv2["transparency"]["transparency score"]}"):
         for k,v in analysis_priv2["transparency"].items():
             st.write(f"{k} : {v}")
-    with st.expander(f"Advertisements Score : {analysis_priv2["ads"]["Ads score"]}"):
+    with st.expander(f"Advertisements Score : {analysis_priv2["ads"]["Advertisement score"]}"):
         for k,v in analysis_priv2["ads"].items():
             st.write(f"{k} : {v}")
     with st.expander(f"Category Risk Score : {analysis_priv2["category_risk"]["category score"]}"):

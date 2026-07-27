@@ -34,25 +34,26 @@ def analyze_privacy_policy(metadata):
     policy = metadata.get("Privacy policy")
 
     if policy:
-        score = 20
         if policy.startswith("https://"):
-            score = 30
-            status = "HTTPS Privacy Policy"
+            score = 15
+            status = "HTTPS Privacy Policy Available"
+
         else:
-            score = 25
-            status = "HTTP Privacy Policy"
+            score = 10
+            status = "Privacy Policy Available but Not HTTPS"
 
     else:
-        score = 0
-        status = "Privacy Policy URL Not Available"
+        # Baseline score because actual URL detection
+        # is not implemented yet.
+        score = 5
+        status = "Privacy Policy Expected, URL Not Verified"
 
     return {
         "score": score,
-        "policy score" : f"{score}/30",
+        "policy score": f"{score}/15",
         "status": status,
         "url": policy
     }
-
 
 def analyze_data_collection(metadata):
     indicators = []
@@ -97,4 +98,34 @@ def analyze_tracking_indicators(metadata):
         "score": score,
         "tracking indicator" : f"{score}/10",
         "status": status
+    }
+
+def analyze_advertisement(metadata):
+
+    tracking_detected = metadata.get("trackData", False)
+
+    # Collect available tracking-related information
+    tracking_details = []
+
+    if tracking_detected:
+        tracking_details.append(
+            "App Store privacy label indicates data may be used for tracking."
+        )
+
+    if tracking_detected:
+        score = 5
+        risk_level = "High"
+        status = "Tracking-related advertising indicators detected"
+    else:
+        score = 15
+        risk_level = "Low"
+        status = "No tracking-related advertising indicators detected"
+
+    return {
+        "score": score,
+        "advertisement_score": f"{score}/15",
+        "status": status,
+        "risk_level": risk_level,
+        "tracking_detected": tracking_detected,
+        "tracking_details": tracking_details
     }

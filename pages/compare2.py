@@ -4,7 +4,7 @@ import streamlit as st
 import requests,time
 from iphone.get_id import get_ios_app_ids
 from iphone.sec_functions import check_developer_verification,check_update_frequency,check_developer_website,check_permissions_transparency,analyze_app_age,analyze_account_deletion,analyze_app_popularity
-from iphone.priv_functions import analyze_privacy_labels,analyze_privacy_policy, analyze_data_collection,analyze_tracking_indicators
+from iphone.priv_functions import analyze_privacy_labels,analyze_privacy_policy, analyze_data_collection,analyze_tracking_indicators,analyze_advertisement
 from background import render_background
 
 render_background()
@@ -88,12 +88,14 @@ analysis_priv1["labels"] = analyze_privacy_labels(metadata1)
 analysis_priv1["policy"] = analyze_privacy_policy(metadata1)
 analysis_priv1["data"] = analyze_data_collection(metadata1)
 analysis_priv1["indicators"] = analyze_tracking_indicators(metadata1)
+analysis_priv1["ads"] = analyze_advertisement(metadata1)
 
 privacy_score1 = sum([
     analysis_priv1["labels"]["score"],
     analysis_priv1["policy"]["score"],
     analysis_priv1["data"]["score"],
-    analysis_priv1["indicators"]["score"]
+    analysis_priv1["indicators"]["score"],
+    analysis_priv1["ads"]["score"]
 ])
 
 info2 = get_ios_app_ids(app2)
@@ -126,12 +128,15 @@ analysis_priv2["labels"] = analyze_privacy_labels(metadata2)
 analysis_priv2["policy"] = analyze_privacy_policy(metadata2)
 analysis_priv2["data"] = analyze_data_collection(metadata2)
 analysis_priv2["indicators"] = analyze_tracking_indicators(metadata2)
+analysis_priv2["ads"] = analyze_advertisement(metadata2)
+
 
 privacy_score2 = sum([
     analysis_priv2["labels"]["score"],
     analysis_priv2["policy"]["score"],
     analysis_priv2["data"]["score"],
-    analysis_priv2["indicators"]["score"]
+    analysis_priv2["indicators"]["score"],
+    analysis_priv2["ads"]["score"]
 ])
 st.markdown(f"""
 <style>
@@ -260,6 +265,9 @@ with col1:
     with st.expander(f"Tracking Indicator Score : {analysis_priv1["indicators"]["tracking indicator"]}"):
         for k,v in analysis_priv1["indicators"].items():
             st.write(f"{k} : {v}")
+    with st.expander(f"Advertisement  Score : {analysis_priv1["ads"]["advertisement_score"]}"):
+                for k,v in analysis_priv1["ads"].items():
+                    st.write(f"{k} : {v}")
     
     st.write(f"""
     Overall Score : {privacy_score1}/100
@@ -377,7 +385,9 @@ with col2:
     with st.expander(f"Tracking Indicator Score : {analysis_priv2["indicators"]["tracking indicator"]}"):
         for k,v in analysis_priv2["indicators"].items():
             st.write(f"{k} : {v}")
-    
+    with st.expander(f"Advertisement  Score : {analysis_priv2["ads"]["advertisement_score"]}"):
+                for k,v in analysis_priv2["ads"].items():
+                    st.write(f"{k} : {v}")
     st.write(f"""
     Overall Score : {privacy_score2}/100
 """)

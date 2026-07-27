@@ -275,7 +275,7 @@ with col2:
     with st.expander(f"Developer Transparency Score : {analysis_priv["transparency"]["transparency score"]}"):
         for k,v in analysis_priv["transparency"].items():
             st.write(f"{k} : {v}")
-    with st.expander(f"Advertisements Score : {analysis_priv["ads"]["Ads score"]}"):
+    with st.expander(f"Advertisements Score : {analysis_priv["ads"]["Advertisement score"]}"):
         for k,v in analysis_priv["ads"].items():
             st.write(f"{k} : {v}")
     with st.expander(f"Category Risk Score : {analysis_priv["category_risk"]["category score"]}"):

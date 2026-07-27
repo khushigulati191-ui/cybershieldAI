@@ -2,7 +2,7 @@ import streamlit as st
 import requests,time
 from iphone.get_id import get_ios_app_ids
 from iphone.sec_functions import check_developer_verification,check_update_frequency,check_developer_website,check_permissions_transparency,analyze_app_age,analyze_account_deletion,analyze_app_popularity
-from iphone.priv_functions import analyze_privacy_labels,analyze_privacy_policy, analyze_data_collection,analyze_tracking_indicators
+from iphone.priv_functions import analyze_privacy_labels,analyze_privacy_policy, analyze_data_collection,analyze_tracking_indicators,analyze_advertisement
 from background import render_background
 
 render_background()
@@ -126,12 +126,15 @@ analysis_priv["labels"] = analyze_privacy_labels(metadata)
 analysis_priv["policy"] = analyze_privacy_policy(metadata)
 analysis_priv["data"] = analyze_data_collection(metadata)
 analysis_priv["indicators"] = analyze_tracking_indicators(metadata)
+analysis_priv["ads"] = analyze_advertisement(metadata)
+
 
 privacy_score = sum([
     analysis_priv["labels"]["score"],
     analysis_priv["policy"]["score"],
     analysis_priv["data"]["score"],
-    analysis_priv["indicators"]["score"]
+    analysis_priv["indicators"]["score"],
+    analysis_priv["ads"]["score"]
 ])
 
 st.write(f"{app_name} - {os_type}")
@@ -271,7 +274,9 @@ with col2:
     with st.expander(f"Tracking Indicator Score : {analysis_priv["indicators"]["tracking indicator"]}"):
         for k,v in analysis_priv["indicators"].items():
             st.write(f"{k} : {v}")
-    
+    with st.expander(f"Advertisement  Score : {analysis_priv["ads"]["advertisement_score"]}"):
+            for k,v in analysis_priv["ads"].items():
+                st.write(f"{k} : {v}")
     st.write(f"""
     Overall Score : {privacy_score}/100
 """)
