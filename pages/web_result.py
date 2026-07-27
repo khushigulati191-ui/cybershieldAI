@@ -2,6 +2,7 @@ import streamlit as st
 import requests,time
 from website.sec_functions import https_check,ssl_check,domain_check,security_headers_check,indicators_check,DNS_check
 from website.priv_functions import cookies_check,third_party_trackers_check,ads_check,privacy_policy_check,data_collection_indicators_check,social_media_trackers_check,detect_cookie_banner
+from website.web_rep import reputation
 from background import render_background
 
 render_background()
@@ -104,6 +105,7 @@ analysis["domain"] = domain_check(final_url)
 analysis["headers"] = security_headers_check(final_url)
 analysis["indicators"] = indicators_check(final_url,url)
 analysis["dns"] = DNS_check(final_url)
+analysis["reputation"] = reputation(final_url)
 
 
 security_score = sum([
@@ -113,7 +115,7 @@ security_score = sum([
     analysis["headers"]["score"],
     analysis["indicators"]["score"],
     analysis["dns"]["score"],
-
+    analysis["reputation"]["score"]
 ])
 
 analysis_priv = {}
@@ -226,6 +228,9 @@ with col1:
     with st.expander(f"DNS check  : {analysis["dns"]["DNS_score"]}"):
         for k,v in analysis["dns"].items():
             st.write(f"{k} : {v}")
+    with st.expander(f"Reputation check  : {analysis["reputation"]["reputation_score"]}"):
+            for k,v in analysis["reputation"].items():
+                st.write(f"{k} : {v}")
     st.write(f"""
     Overall Score : {security_score}/100
 """)

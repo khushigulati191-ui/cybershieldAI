@@ -166,6 +166,8 @@ def domain_check(final_url):
         "domain_score" : f"{score}/15",
         "creation" : creation,
         "expiry" : expiry,
+        "days left" : days_left,
+        "age": f"{age_years:.1f} years",
         "registrar" : registrar,
         "name servers" : w.name_servers,
         "updated_date" : w.updated_date,
