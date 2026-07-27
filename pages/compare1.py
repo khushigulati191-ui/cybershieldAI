@@ -4,6 +4,7 @@ import streamlit as st
 import requests,time
 from website.sec_functions import https_check,ssl_check,domain_check,security_headers_check,indicators_check,DNS_check
 from website.priv_functions import cookies_check,third_party_trackers_check,ads_check,privacy_policy_check,data_collection_indicators_check,social_media_trackers_check,detect_cookie_banner
+from website.web_rep import reputation
 from background import render_background
 
 render_background()
@@ -65,6 +66,7 @@ analysis1["domain"] = domain_check(final_url1)
 analysis1["headers"] = security_headers_check(final_url1)
 analysis1["indicators"] = indicators_check(final_url1,url1)
 analysis1["dns"] = DNS_check(final_url1)
+analysis1["reputation"] = reputation(final_url1)
 
 
 security_score1 = sum([
@@ -74,7 +76,7 @@ security_score1 = sum([
     analysis1["headers"]["score"],
     analysis1["indicators"]["score"],
     analysis1["dns"]["score"],
-
+    analysis1["reputation"]["score"]
 ])
 
 analysis_priv1 = {}
@@ -105,6 +107,7 @@ analysis2["domain"] = domain_check(final_url2)
 analysis2["headers"] = security_headers_check(final_url2)
 analysis2["indicators"] = indicators_check(final_url2,url2)
 analysis2["dns"] = DNS_check(final_url2)
+analysis2["reputation"] = reputation(final_url2)
 
 
 security_score2 = sum([
@@ -114,7 +117,7 @@ security_score2 = sum([
     analysis2["headers"]["score"],
     analysis2["indicators"]["score"],
     analysis2["dns"]["score"],
-
+    analysis2["reputation"]["score"]
 ])
 
 analysis_priv2 = {}
@@ -218,6 +221,9 @@ with col1:
     with st.expander(f"DNS check  : {analysis1["dns"]["DNS_score"]}"):
         for k,v in analysis1["dns"].items():
             st.write(f"{k} : {v}")
+    with st.expander(f"Reputation check  : {analysis1["reputation"]["reputation_score"]}"):
+                for k,v in analysis1["reputation"].items():
+                    st.write(f"{k} : {v}")
     st.write(f"""
     Overall Score : {security_score1}/100
 """)
@@ -339,6 +345,9 @@ with col2:
     with st.expander(f"DNS check  : {analysis2["dns"]["DNS_score"]}"):
         for k,v in analysis2["dns"].items():
             st.write(f"{k} : {v}")
+    with st.expander(f"Reputation check  : {analysis2["reputation"]["reputation_score"]}"):
+                for k,v in analysis2["reputation"].items():
+                    st.write(f"{k} : {v}")
     st.write(f"""
     Overall Score : {security_score2}/100
 """)

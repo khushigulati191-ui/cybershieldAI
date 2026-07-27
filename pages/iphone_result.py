@@ -1,7 +1,7 @@
 import streamlit as st
 import requests,time
 from iphone.get_id import get_ios_app_ids
-from iphone.sec_functions import check_developer_verification,check_update_frequency,check_developer_website,check_permissions_transparency
+from iphone.sec_functions import check_developer_verification,check_update_frequency,check_developer_website,check_permissions_transparency,analyze_app_age,analyze_account_deletion,analyze_app_popularity
 from iphone.priv_functions import analyze_privacy_labels,analyze_privacy_policy, analyze_data_collection,analyze_tracking_indicators
 from background import render_background
 
@@ -104,13 +104,20 @@ analysis["developer"] = check_developer_verification(metadata)
 analysis["frequency"] = check_update_frequency(metadata)
 analysis["website"] = check_developer_website(metadata)
 analysis["permission"] = check_permissions_transparency(metadata)
+analysis["age"] = analyze_app_age(metadata)
+analysis["deletion"] = analyze_account_deletion(metadata)
+analysis["popularity"] = analyze_app_popularity(metadata)
+
 
 
 security_score = sum([
     analysis["developer"]["score"],
     analysis["frequency"]["score"],
     analysis["website"]["score"],
-    analysis["permission"]["score"]
+    analysis["permission"]["score"],
+    analysis["age"]["score"],
+    analysis["deletion"]["score"],
+    analysis["popularity"]["score"]
 ])
 
 analysis_priv = {}
@@ -208,7 +215,15 @@ with col1:
     with st.expander(f"Permissions Transparency  : {analysis["permission"]["permission_score"]}"):
         for k,v in analysis["permission"].items():
             st.write(f"{k} : {v}")
-    
+    with st.expander(f"App Age  : {analysis["age"]["App Age Score"]}"):
+            for k,v in analysis["age"].items():
+                st.write(f"{k} : {v}")
+    with st.expander(f"Account Deletion Support  : {analysis["deletion"]["account deletion score"]}"):
+                for k,v in analysis["deletion"].items():
+                    st.write(f"{k} : {v}")
+    with st.expander(f"Popularity  : {analysis["popularity"]["popularity score"]}"):
+                    for k,v in analysis["popularity"].items():
+                        st.write(f"{k} : {v}")
     st.write(f"""
     Overall Score : {security_score}/100
 """)

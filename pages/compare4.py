@@ -3,7 +3,7 @@
 import streamlit as st
 import requests,time
 from iphone.get_id import get_ios_app_ids
-from iphone.sec_functions import check_developer_verification,check_update_frequency,check_developer_website,check_permissions_transparency
+from iphone.sec_functions import check_developer_verification,check_update_frequency,check_developer_website,check_permissions_transparency,analyze_app_age,analyze_account_deletion,analyze_app_popularity
 from iphone.priv_functions import analyze_privacy_labels,analyze_privacy_policy, analyze_data_collection,analyze_tracking_indicators
 
 from android.package import get_package_name
@@ -62,6 +62,7 @@ div[data-testid="stExpander"] details[open] {
 compare_type = st.session_state.get("compare_type")
 app = st.session_state.get("app")
 
+#iphone
 info1 = get_ios_app_ids(app)
 metadata1 = info1["metadata"]
 analysis1 = {}
@@ -70,13 +71,19 @@ analysis1["developer"] = check_developer_verification(metadata1)
 analysis1["frequency"] = check_update_frequency(metadata1)
 analysis1["website"] = check_developer_website(metadata1)
 analysis1["permission"] = check_permissions_transparency(metadata1)
+analysis1["age"] = analyze_app_age(metadata1)
+analysis1["deletion"] = analyze_account_deletion(metadata1)
+analysis1["popularity"] = analyze_app_popularity(metadata1)
 
 
 security_score1 = sum([
     analysis1["developer"]["score"],
     analysis1["frequency"]["score"],
     analysis1["website"]["score"],
-    analysis1["permission"]["score"]
+    analysis1["permission"]["score"],
+    analysis1["age"]["score"],
+    analysis1["deletion"]["score"],
+    analysis1["popularity"]["score"]
 ])
 
 analysis_priv1 = {}
@@ -93,6 +100,7 @@ privacy_score1 = sum([
     analysis_priv1["indicators"]["score"]
 ])
 
+#android
 package_name2 = get_package_name(app)
 info2 = find_metadata(package_name2)
 
@@ -211,6 +219,15 @@ with col1:
     with st.expander(f"Permissions Transparency  : {analysis1["permission"]["permission_score"]}"):
         for k,v in analysis1["permission"].items():
             st.write(f"{k} : {v}")
+    with st.expander(f"App Age  : {analysis1["age"]["App Age Score"]}"):
+                for k,v in analysis1["age"].items():
+                    st.write(f"{k} : {v}")
+    with st.expander(f"Account Deletion Support  : {analysis1["deletion"]["account deletion score"]}"):
+                    for k,v in analysis1["deletion"].items():
+                        st.write(f"{k} : {v}")
+    with st.expander(f"Popularity  : {analysis1["popularity"]["popularity score"]}"):
+                        for k,v in analysis1["popularity"].items():
+                            st.write(f"{k} : {v}")
     
     st.write(f"""
     Overall Score : {security_score1}/100
@@ -288,7 +305,7 @@ with col1:
 
 with col2:
     st.write(f"{app} - Android")
-    pointer_position = 100 - ((security_score1 + privacy_score1) / 2)
+    pointer_position = 100 - ((security_score2 + privacy_score2) / 2)
     st.markdown(f"""
             <div class="risk-bar">
                 <div class="risk-fill" style="width: {pointer_position}%;"></div>

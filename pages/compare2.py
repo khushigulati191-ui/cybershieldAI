@@ -3,7 +3,7 @@
 import streamlit as st
 import requests,time
 from iphone.get_id import get_ios_app_ids
-from iphone.sec_functions import check_developer_verification,check_update_frequency,check_developer_website,check_permissions_transparency
+from iphone.sec_functions import check_developer_verification,check_update_frequency,check_developer_website,check_permissions_transparency,analyze_app_age,analyze_account_deletion,analyze_app_popularity
 from iphone.priv_functions import analyze_privacy_labels,analyze_privacy_policy, analyze_data_collection,analyze_tracking_indicators
 from background import render_background
 
@@ -67,13 +67,19 @@ analysis1["developer"] = check_developer_verification(metadata1)
 analysis1["frequency"] = check_update_frequency(metadata1)
 analysis1["website"] = check_developer_website(metadata1)
 analysis1["permission"] = check_permissions_transparency(metadata1)
+analysis1["age"] = analyze_app_age(metadata1)
+analysis1["deletion"] = analyze_account_deletion(metadata1)
+analysis1["popularity"] = analyze_app_popularity(metadata1)
 
 
 security_score1 = sum([
     analysis1["developer"]["score"],
     analysis1["frequency"]["score"],
     analysis1["website"]["score"],
-    analysis1["permission"]["score"]
+    analysis1["permission"]["score"],
+    analysis1["age"]["score"],
+    analysis1["deletion"]["score"],
+    analysis1["popularity"]["score"]
 ])
 
 analysis_priv1 = {}
@@ -98,13 +104,20 @@ analysis2["developer"] = check_developer_verification(metadata2)
 analysis2["frequency"] = check_update_frequency(metadata2)
 analysis2["website"] = check_developer_website(metadata2)
 analysis2["permission"] = check_permissions_transparency(metadata2)
+analysis2["age"] = analyze_app_age(metadata2)
+analysis2["deletion"] = analyze_account_deletion(metadata2)
+analysis2["popularity"] = analyze_app_popularity(metadata2)
+
 
 
 security_score2 = sum([
     analysis2["developer"]["score"],
     analysis2["frequency"]["score"],
     analysis2["website"]["score"],
-    analysis2["permission"]["score"]
+    analysis2["permission"]["score"],
+    analysis2["age"]["score"],
+    analysis2["deletion"]["score"],
+    analysis2["popularity"]["score"]
 ])
 
 analysis_priv2 = {}
@@ -195,7 +208,15 @@ with col1:
     with st.expander(f"Permissions Transparency  : {analysis1["permission"]["permission_score"]}"):
         for k,v in analysis1["permission"].items():
             st.write(f"{k} : {v}")
-    
+    with st.expander(f"App Age  : {analysis1["age"]["App Age Score"]}"):
+                for k,v in analysis1["age"].items():
+                    st.write(f"{k} : {v}")
+    with st.expander(f"Account Deletion Support  : {analysis1["deletion"]["account deletion score"]}"):
+                    for k,v in analysis1["deletion"].items():
+                        st.write(f"{k} : {v}")
+    with st.expander(f"Popularity  : {analysis1["popularity"]["popularity score"]}"):
+                        for k,v in analysis1["popularity"].items():
+                            st.write(f"{k} : {v}")
     st.write(f"""
     Overall Score : {security_score1}/100
 """)
@@ -303,7 +324,15 @@ with col2:
     with st.expander(f"Permissions Transparency  : {analysis2["permission"]["permission_score"]}"):
         for k,v in analysis2["permission"].items():
             st.write(f"{k} : {v}")
-    
+    with st.expander(f"App Age  : {analysis2["age"]["App Age Score"]}"):
+                for k,v in analysis2["age"].items():
+                    st.write(f"{k} : {v}")
+    with st.expander(f"Account Deletion Support  : {analysis2["deletion"]["account deletion score"]}"):
+                    for k,v in analysis2["deletion"].items():
+                        st.write(f"{k} : {v}")
+    with st.expander(f"Popularity  : {analysis2["popularity"]["popularity score"]}"):
+                        for k,v in analysis2["popularity"].items():
+                            st.write(f"{k} : {v}")
     st.write(f"""
     Overall Score : {security_score2}/100
 """)
