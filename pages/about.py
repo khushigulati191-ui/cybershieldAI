@@ -231,7 +231,7 @@ st.markdown("""
 <div class="card-text">
 
 <b>CyberShield AI</b> is an AI-driven cybersecurity platform designed to help users
-understand whether a website is secure, trustworthy, and respectful of user privacy.
+understand whether a website or an app is secure, trustworthy, and respectful of user privacy.
 
 The platform automatically analyzes publicly available information and transforms
 technical findings into simple, easy-to-understand insights.

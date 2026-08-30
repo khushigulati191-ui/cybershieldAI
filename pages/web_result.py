@@ -138,6 +138,12 @@ privacy_score = sum([
     analysis_priv["CB"]["score"]
 ])
 
+analysis_results = [analysis, analysis_priv]
+st.session_state["analysis_results"] = analysis_results
+st.session_state["security_score"] = security_score
+st.session_state["privacy_score"] = privacy_score
+st.session_state["overall_score"] = (security_score + privacy_score) / 2
+
 st.write(f"{final_url}")
 
 

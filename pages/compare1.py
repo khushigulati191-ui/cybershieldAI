@@ -442,3 +442,47 @@ st.markdown(
     """, 
     unsafe_allow_html=True
     )
+
+#button
+st.markdown("""
+<style>
+
+.stButton > button {
+    background: linear-gradient(
+        135deg,
+        #06B6D4,
+        #00FFAA
+    );
+
+    color: black;
+    border: none;
+    border-radius: 15px;
+
+    padding: 12px 30px;
+
+    font-size: 18px;
+    font-weight: 600;
+    font-family: 'Orbitron';
+    text-align: center;
+            
+    box-shadow:
+        0 0 15px rgba(37,99,235,0.5);
+
+    transition: all 0.3s ease;
+}
+
+.stButton > button:hover {
+
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 0 25px rgba(37,99,235,0.8);
+
+}
+
+</style>
+""", unsafe_allow_html=True)
+
+if st.button("AI Summary", type = "tertiary"):
+    
+    st.switch_page("pages/compare_summary.py")

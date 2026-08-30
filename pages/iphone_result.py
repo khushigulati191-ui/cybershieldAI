@@ -138,6 +138,10 @@ privacy_score = sum([
 ])
 
 st.write(f"{app_name} - {os_type}")
+st.session_state["analysis_results"] = [analysis, analysis_priv]
+st.session_state["security_score"] = security_score
+st.session_state["privacy_score"] = privacy_score
+st.session_state["overall_score"] = (security_score + privacy_score) / 2
 
 pointer_position = 100 - ((security_score + privacy_score) / 2)
 
