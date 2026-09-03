@@ -1,35 +1,30 @@
-def find_metadata(package_name,):
-    from google_play_scraper import search,app
-    try:
-        
-        
-        data = app(package_name, lang="en", country="us")
+def find_metadata(package_name):
+    from google_play_scraper import app
 
+    try:
         details = app(
-        package_name,
-        lang="en",
-        country="us"
-    )
-        
+            package_name,
+            lang="en",
+            country="us"
+        )
 
         return {
-            "official_name": details["title"],
-            "package_name": details["appId"],
-            "developer": details["developer"],
-            "version": details["version"],
+            "official_name": details.get("title"),
+            "package_name": details.get("appId"),
+            "developer": details.get("developer"),
+            "version": details.get("version"),
             "version_code": details.get("versionCode"),
-            "category": details["genre"],
-            "installs": details["installs"],
-            "rating": details["score"],
+            "category": details.get("genre"),
+            "installs": details.get("installs"),
+            "rating": details.get("score"),
             "updated": details.get("updatedOn"),
-            "description": details["summary"],
+            "description": details.get("summary"),
             "privacy_policy": details.get("privacyPolicy"),
-            "data" : data
+            "data": details
         }
 
     except Exception as e:
         return {
-            "error": str(e)
-        }   
-
-
+            "error": str(e),
+            "data": None
+        }

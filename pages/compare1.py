@@ -183,6 +183,23 @@ st.markdown(f"""
 
 """, unsafe_allow_html=True)
 
+website1_data = {
+    "url": final_url1,
+    "analysis": analysis1,
+    "analysis_priv": analysis_priv1,
+    "security_score": security_score1,
+    "privacy_score": privacy_score1
+}
+
+website2_data = {
+    "url": final_url2,
+    "analysis": analysis2,
+    "analysis_priv": analysis_priv2,
+    "security_score": security_score2,
+    "privacy_score": privacy_score2
+}
+st.session_state["website1_data"] = website1_data
+st.session_state["website2_data"] = website2_data
 
 col1,col2 = st.columns(2)
 with col1:
@@ -485,4 +502,4 @@ st.markdown("""
 
 if st.button("AI Summary", type = "tertiary"):
     
-    st.switch_page("pages/compare_summary.py")
+    st.switch_page("pages/compare1_summary.py")

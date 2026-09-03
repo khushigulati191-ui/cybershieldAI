@@ -101,7 +101,16 @@ privacy_score1 = sum([
     analysis_priv1["ads"]["score"],
     analysis_priv1["category_risk"]["score"]
 ])
-
+app1_data = {
+     "app_name": app1,
+    "os_type": os_type,
+    "security_analysis": analysis1,
+    "privacy_analysis": analysis_priv1,
+    "security_score": security_score1,
+    "privacy_score": privacy_score1,
+    "overall_score": (security_score1 + privacy_score1) / 2
+     }
+st.session_state["app1_data"] = app1_data
 package_name2 = get_package_name(app2)
 info2 = find_metadata(package_name2)
 
@@ -144,6 +153,16 @@ privacy_score2 = sum([
     analysis_priv2["ads"]["score"],
     analysis_priv2["category_risk"]["score"]
 ])
+app2_data = {
+     "app_name": app2,
+     "os_type": os_type,
+     "security_analysis": analysis2,
+     "privacy_analysis": analysis_priv2,
+     "security_score": security_score2,
+     "privacy_score": privacy_score2,
+     "overall_score": (security_score2 + privacy_score2) / 2
+     }
+st.session_state["app2_data"] = app2_data
 
 st.markdown(f"""
 <style>
@@ -491,4 +510,4 @@ st.markdown("""
 
 if st.button("AI Summary", type = "tertiary"):
     
-    st.switch_page("pages/compare_summary.py")
+    st.switch_page("pages/compare3_summary.py")

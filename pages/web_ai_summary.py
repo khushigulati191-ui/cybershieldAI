@@ -240,32 +240,6 @@ with col4:
         st.error("✕ Security Headers")
 
 
-# col5, col6, col7 = st.columns(3)
-
-# with col5:
-#     if security_status["suspicious_indicators"] == "Good":
-#         st.success("✓ Indicators")
-#     elif security_status["suspicious_indicators"] == "Warning":
-#         st.warning("⚠ Indicators")
-#     else:
-#         st.error("✕ Indicators")
-
-# with col6:
-#     if security_status["dns"] == "Good":
-#         st.success("✓ DNS")
-#     elif security_status["dns"] == "Warning":
-#         st.warning("⚠ DNS")
-#     else:
-#         st.error("✕ DNS")
-
-# with col7:
-#     if security_status["reputation"] == "Good":
-#         st.success("✓ Reputation")
-#     elif security_status["reputation"] == "Warning":
-#         st.warning("⚠ Reputation")
-#     else:
-#         st.error("✕ Reputation")
-
 
 # =========================
 # PRIVACY ASSESSMENT

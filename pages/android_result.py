@@ -100,6 +100,10 @@ os_type = st.session_state.get("os_type")
 package_name = get_package_name(app_name)
 info = find_metadata(package_name)
 
+if "error" in info:
+    st.error(f"Could not retrieve app information: {info['error']}")
+    st.stop()
+
 metadata = info["data"]
 
 analysis = {}
@@ -147,6 +151,15 @@ st.session_state["privacy_score"] = privacy_score
 st.session_state["overall_score"] = (security_score + privacy_score) / 2
 
 pointer_position = 100 - ((security_score + privacy_score) / 2)
+
+analysis_results = {
+    "security": analysis,
+    "privacy": analysis_priv
+}
+st.session_state["analysis_results"] = analysis_results
+st.session_state["security_score"] = security_score
+st.session_state["privacy_score"] = privacy_score
+st.session_state["overall_score"] = (security_score + privacy_score) / 2
 
 st.markdown(f"""
 <style>

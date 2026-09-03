@@ -102,6 +102,16 @@ privacy_score1 = sum([
     analysis_priv1["indicators"]["score"],
     analysis_priv1["ads"]["score"]
 ])
+ios_data = {
+     "app_name": app,
+     "security_analysis": analysis1,
+     "privacy_analysis": analysis_priv1,
+     "security_score": security_score1,
+     "privacy_score": privacy_score1,
+     "overall_score": (security_score1 + privacy_score1) / 2
+}
+st.session_state["ios_data"] = ios_data
+
 
 #android
 package_name2 = get_package_name(app)
@@ -146,6 +156,15 @@ privacy_score2 = sum([
     analysis_priv2["ads"]["score"],
     analysis_priv2["category_risk"]["score"]
 ])
+android_data = {
+     "app_name": app,
+        "security_analysis": analysis2,
+        "privacy_analysis": analysis_priv2,
+        "security_score": security_score2,
+        "privacy_score": privacy_score2,
+        "overall_score": (security_score2 + privacy_score2) / 2
+}
+st.session_state["android_data"] = android_data
 
 st.markdown(f"""
 <style>
@@ -468,4 +487,4 @@ st.markdown("""
 
 if st.button("AI Summary", type = "tertiary"):
     
-    st.switch_page("pages/compare_summary.py")
+    st.switch_page("pages/compare4_summary.py")
