@@ -16,21 +16,27 @@ def developer(data):
         "Telegram FZ-LLC",
         "Signal Foundation"
     ]
-
-    developer = data.get("developer", "Unknown")
-   
-    if developer in trusted_developers:
-        score += 20
-        rep = "Trusted"
-    else:
-        score += 10
-        rep = "Unknown"
-    return {
-        "score" : score,
-        "Developer Score" : f"{score}/20",
-        "Reputation" : rep,
-        "Developer" : developer
-    }
+    try:
+        developer = data.get("developer", "Unknown")
+    
+        if developer in trusted_developers:
+            score += 20
+            rep = "Trusted"
+        else:
+            score += 10
+            rep = "Unknown"
+        return {
+            "score" : score,
+            "Developer Score" : f"{score}/20",
+            "Reputation" : rep,
+            "Developer" : developer
+        }
+    except Exception as e:
+        return {
+            "score" : 0,
+            "Developer Score" : f"{score}/20",
+            "error": str(e)
+        }
 
     
 def install_count(data):
@@ -38,27 +44,34 @@ def install_count(data):
     from datetime import datetime
     import requests
     import re
-    installs = data.get("realInstalls", 0)
-    score = 0
-    issue = None
+    try:
+        installs = data.get("realInstalls", 0)
+        score = 0
+        issue = None
 
-    if installs >= 10000000:
-        score += 20
-    elif installs >= 1000000:
-        score += 15
-    elif installs >= 100000:
-        score += 10
-    elif installs >= 10000:
-        score += 5
-        issue =  "Low install count."
-    else:
-        issue = "Very low install count."
-    return {
-        "score" : score,
-        "Install score" : f"{score}/20",
-        "Install count" : installs,
-        **({"Issue": issue} if issue else {})
-    }
+        if installs >= 10000000:
+            score += 20
+        elif installs >= 1000000:
+            score += 15
+        elif installs >= 100000:
+            score += 10
+        elif installs >= 10000:
+            score += 5
+            issue =  "Low install count."
+        else:
+            issue = "Very low install count."
+        return {
+            "score" : score,
+            "Install score" : f"{score}/20",
+            "Install count" : installs,
+            **({"Issue": issue} if issue else {})
+        }
+    except Exception as e:
+        return {
+            "score" : 0,
+            "Install score" : f"{score}/20",
+            "error": str(e)
+        }
 
 def community_trust(data):
     from google_play_scraper import app
@@ -67,73 +80,121 @@ def community_trust(data):
     import re
     score = 0
     issue = None
-    reviews = data.get("ratings", 0)
-    rating = data.get("score", 0)
-    if rating >= 4.5 and reviews >= 10000:
-        score += 15
-        confidence = "HIGH"
-    elif rating >= 4.2 and reviews >= 1000:
-        score += 12
-        confidence = "MODERATE"
-
-    elif rating >= 4.0 and reviews >= 100:
-        score += 10
-        confidence = "MODERATE"
-
-    elif rating >= 3.5:
-        score += 6
-        issue = "Average user satisfaction."
-        confidence = "LOW"
-
-    else:
-        score += 2
-        issue = "Poor user ratings."
-        confidence = "LOW"
-
-    return {
-        "score" : score,
-        "Community score" : f"{score}/15",
-        "Community trust" : f"{confidence} Trust",
-        **({"Issue": issue} if issue else {}),
-        "Note" : """Confidence indicates how reliable the rating is based on the number of user reviews. 
-        It does not guarantee the app is secure or private."""
-    }
-
-def update_frequency(data):
-    from google_play_scraper import app
-    from datetime import datetime
-    import requests
-    import re
-    score = 0
-    issue = None
-    updated = data.get("updated")
-
     try:
-        if updated:
-            update_date = datetime.strptime(updated, "%b %d, %Y")
-            days = (datetime.now() - update_date).days
+        reviews = data.get("ratings", 0)
+        rating = data.get("score", 0)
+        if rating >= 4.5 and reviews >= 10000:
+            score += 15
+            confidence = "HIGH"
+        elif rating >= 4.2 and reviews >= 1000:
+            score += 12
+            confidence = "MODERATE"
 
-            if days <= 180:
-                score += 15
-            elif days <= 365:
-                score += 10
-            elif days <= 730:
-                score += 5
-                issue = "Application has not been updated recently."
-            else:
-                issue = "Application appears abandoned."
-            return {
+        elif rating >= 4.0 and reviews >= 100:
+            score += 10
+            confidence = "MODERATE"
+
+        elif rating >= 3.5:
+            score += 6
+            issue = "Average user satisfaction."
+            confidence = "LOW"
+
+        else:
+            score += 2
+            issue = "Poor user ratings."
+            confidence = "LOW"
+
+        return {
             "score" : score,
-            "Update Frequency Score" : f"{score}/15",
-            "Days from last updated" : days,
-            **({"Issue": issue} if issue else {})
+            "Community score" : f"{score}/15",
+            "Community trust" : f"{confidence} Trust",
+            **({"Issue": issue} if issue else {}),
+            "Note" : """Confidence indicates how reliable the rating is based on the number of user reviews. 
+            It does not guarantee the app is secure or private."""
         }
-    except:
-        issue = "Unable to determine update frequency."
+    except Exception as e:
         return {
             "score" : 0,
-            "Update Frequency Score" : "0/15",
-            "Issue" : issue
+            "Community score" : f"{score}/15",
+            "error": str(e)
+        }
+
+def update_frequency(data):
+    from datetime import datetime
+
+    try:
+        # Make sure data itself is valid
+        if not isinstance(data, dict):
+            return {
+                "score": 0,
+                "Update Frequency Score": "0/15",
+                "Issue": "Unable to determine update frequency."
+            }
+
+        updated = data.get("updated")
+
+        # If update date is missing
+        if not updated:
+            return {
+                "score": 0,
+                "Update Frequency Score": "0/15",
+                "Issue": "Unable to determine update frequency."
+            }
+
+        # Handle update date
+        try:
+            if isinstance(updated, datetime):
+                update_date = updated
+            else:
+                update_date = datetime.strptime(
+                    str(updated),
+                    "%b %d, %Y"
+                )
+
+            days = (datetime.now() - update_date).days
+
+        except Exception:
+            return {
+                "score": 0,
+                "Update Frequency Score": "0/15",
+                "Issue": "Unable to determine update frequency."
+            }
+
+        # Calculate score
+        score = 0
+        issue = None
+
+        if days <= 180:
+            score = 15
+
+        elif days <= 365:
+            score = 10
+
+        elif days <= 730:
+            score = 5
+            issue = "Application has not been updated recently."
+
+        else:
+            score = 0
+            issue = "Application appears abandoned."
+
+        result = {
+            "score": score,
+            "Update Frequency Score": f"{score}/15",
+            "Days from last updated": days
+        }
+
+        if issue:
+            result["Issue"] = issue
+
+        return result
+
+    except Exception as e:
+        return {
+            "score": 0,
+            "Update Frequency Score": "0/15",
+            "Issue": "Unable to determine update frequency.",
+            "error": str(e)
         }
 
 def app_age(data):
@@ -143,46 +204,50 @@ def app_age(data):
     import re
     score = 0
     issue = None
-    released = data.get("released")
-
     try:
-        if released:
-            release_date = datetime.strptime(released, "%b %d, %Y")
-            years = round((datetime.now() - release_date).days / 365,2)
+        released = data.get("released")
 
-            if years >= 5:
-                score += 10
-            elif years >= 2:
-                score += 7
-            elif years >= 1:
-                score += 5
+        try:
+            if released:
+                release_date = datetime.strptime(released, "%b %d, %Y")
+                years = round((datetime.now() - release_date).days / 365,2)
+
+                if years >= 5:
+                    score += 10
+                elif years >= 2:
+                    score += 7
+                elif years >= 1:
+                    score += 5
+                else:
+                    score += 2
+                    issue = "Recently released application."
+                return {
+                    "score" : score,
+                    "Age score" : f"{score}/10",
+                    "App age" : years,
+                    **({"Issue": issue} if issue else {})
+                }
             else:
-                score += 2
-                issue = "Recently released application."
-            return {
-                "score" : score,
-                "Age score" : f"{score}/10",
-                "App age" : years,
-                **({"Issue": issue} if issue else {})
-            }
-        else:
-            # App release date is not available
+                # App release date is not available
+                return {
+                    "score": 0,
+                    "Age score": "0/10",
+                    "App age": "Unknown",
+                    "Issue": "Application release date is not available."
+                }
+
+        except Exception as e:
             return {
                 "score": 0,
                 "Age score": "0/10",
                 "App age": "Unknown",
-                "Issue": "Application release date is not available."
+                "Issue": f"Unable to analyze application age: {str(e)}"
             }
-
     except Exception as e:
         return {
-            "score": 0,
-            "ads_score": "0/15",
-            "status": "Advertisement Analysis Failed",
-            "risk_level": "Unknown",
-            "tracking_detected": "Unknown",
-            "contains_ads": "Unknown",
-            "issue": f"Unable to analyze advertisement information: {str(e)}"
+            "score" : 0,
+            "Age score" : f"{score}/10",
+            "error": str(e)
         }
     
 def sus(data):
@@ -191,68 +256,80 @@ def sus(data):
     import requests
     import re
     issue = None
-
-    description = data.get("description", "").lower()
-    score = 0
-    suspicious_keywords = [
-        "hack",
-        "mod",
-        "unlimited",
-        "free money",
-        "earn money",
-        "cheat",
-        "crack",
-        "premium unlocked"
-    ]
-
-    found = [
-        k for k in suspicious_keywords
-        if k in description
-    ]
-
-    if not found:
-        score += 10
-    else:
+    try:
+        description = data.get("description", "").lower()
         score = 0
-        issue = "Suspicious keywords detected"
-    return {
-        "score" : score,
-        "Sus score" : f"{score}/10",
-        **({"Issue": issue} if issue else {}),
-        **({"Sus words":found} if found else {})
-    }
+        suspicious_keywords = [
+            "hack",
+            "mod",
+            "unlimited",
+            "free money",
+            "earn money",
+            "cheat",
+            "crack",
+            "premium unlocked"
+        ]
 
+        found = [
+            k for k in suspicious_keywords
+            if k in description
+        ]
+
+        if not found:
+            score += 10
+        else:
+            score = 0
+            issue = "Suspicious keywords detected"
+        return {
+            "score" : score,
+            "Sus score" : f"{score}/10",
+            **({"Issue": issue} if issue else {}),
+            **({"Sus words":found} if found else {})
+        }
+    except Exception as e:
+        return {
+            "score" : 0,
+            "Sus score" : f"{score}/10",
+            "error": str(e)
+        }
+    
 def transparency(data):
     from google_play_scraper import app
     from datetime import datetime
     import requests
     import re
-    developer_email = data.get("developerEmail")
-    developer_website = data.get("developerWebsite")
+    try:
 
-    transparency_score = 0
-    issue = None
-    https_valid = False
-    if developer_email:
-        transparency_score += 5
-    else:
-        issue = "Developer email not provided."
+        developer_email = data.get("developerEmail")
+        developer_website = data.get("developerWebsite")
 
-    if developer_website:
-        if developer_website.startswith("https://"):
+        transparency_score = 0
+        issue = None
+        https_valid = False
+        if developer_email:
             transparency_score += 5
-            https_valid = True
         else:
-            transparency_score += 2
-            issue = "Developer website does not use HTTPS."
-            https_valid = False
-    else:
-        issue = "Developer website not provided."
+            issue = "Developer email not provided."
 
-    return {
-        "score" : transparency_score,
-        "transparency_score" : f"{transparency_score}/10",
-        "https_valid" : https_valid,
-        **({"Issue": issue} if issue else {})
-    }
-            
+        if developer_website:
+            if developer_website.startswith("https://"):
+                transparency_score += 5
+                https_valid = True
+            else:
+                transparency_score += 2
+                issue = "Developer website does not use HTTPS."
+                https_valid = False
+        else:
+            issue = "Developer website not provided."
+
+        return {
+            "score" : transparency_score,
+            "transparency_score" : f"{transparency_score}/10",
+            "https_valid" : https_valid,
+            **({"Issue": issue} if issue else {})
+        }
+    except Exception as e:
+        return {
+            "score" : 0,
+            "transparency_score" : f"{transparency_score}/10",
+            "error": str(e)}   

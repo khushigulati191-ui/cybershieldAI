@@ -294,7 +294,7 @@ def app_popup():
     )
     app_name = st.text_input(
         "App Name",
-        placeholder="e.g. WhatsApp"
+        placeholder="e.g. WhatsApp Messenger"
     )
     try:
         if st.button("Analyze App", use_container_width=True):

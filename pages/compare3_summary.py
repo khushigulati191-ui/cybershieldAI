@@ -48,14 +48,29 @@ response = requests.post(
     }
 )
 
+import re
 response.raise_for_status()
 
 result = response.json()
 
 ai_text = result["choices"][0]["message"]["content"]
 
-summary = json.loads(ai_text)
+ai_text = ai_text.strip()
 
+if ai_text.startswith("```"):
+    ai_text = re.sub(r"^```(?:json)?\s*", "", ai_text)
+    ai_text = re.sub(r"\s*```$", "", ai_text)
+
+try:
+    summary = json.loads(ai_text)
+
+except json.JSONDecodeError:
+    st.error("❌ some error occurred. please try again later.")
+
+    st.write("### Raw AI Response")
+    st.code(ai_text)
+
+    st.stop()
 app1_name = summary["app1_name"]
 app2_name = summary["app2_name"]
 

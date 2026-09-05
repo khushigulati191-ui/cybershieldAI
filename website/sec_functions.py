@@ -120,116 +120,140 @@ def ssl_check(final_url):
             "ssl_present" : False
         }
     
-def domain_check(final_url):
-    score = 0
-    from datetime import datetime,timezone
-    import whois
-    from urllib.parse import urlparse
-
-    domain = urlparse(final_url).hostname
-
-    if domain.startswith("www."):
-        domain = domain[4:]
+import whois
+from urllib.parse import urlparse
+from datetime import datetime
 
 
-    w = whois.whois(domain)  
+def domain_check(url):
+    try:
+        # Extract domain
+        domain = urlparse(url).netloc
 
-    creation = w.creation_date
-    if isinstance(creation, list):
-        creation = creation[0]
+        # Remove port if present
+        domain = domain.split(":")[0]
 
-    age_days = (datetime.now(timezone.utc) - creation).days
-    age_years = age_days / 365
-    from datetime import datetime
+        # Remove www.
+        if domain.startswith("www."):
+            domain = domain[4:]
 
-    expiry = w.expiration_date
-    if isinstance(expiry, list):
-        expiry = expiry[0]
-    days_left = (expiry - datetime.now(timezone.utc)).days
-    years_left = days_left / 365
-    if age_years>5:
-        score+=10
-    elif age_years >1:
-        score+=7
-    else:
-        score+=3
-    if years_left>1:
-        score+=5
-    elif years_left >0:
-        score+=2 
-    else:
-        score+=0
-    registrar = w.registrar
-    country = w.country
-    return {
-        "score" : score,
-        "domain_score" : f"{score}/15",
-        "creation" : creation,
-        "expiry" : expiry,
-        "days left" : days_left,
-        "age": f"{age_years:.1f} years",
-        "registrar" : registrar,
-        "name servers" : w.name_servers,
-        "updated_date" : w.updated_date,
-        "organisation" : w.org,
-        "country" : w.country
-    }
+        try:
+            w = whois.whois(domain)
+        except Exception as e:
+            return {
+                "score": 0,
+                "domain_score": "0/10",
+                "domain": domain,
+                "status": "WHOIS lookup unavailable",
+                "error": str(e),
+                "registrar": "Unknown",
+                "creation_date": "Unknown",
+                "expiration_date": "Unknown",
+                "domain_age_days": None
+            }
+
+        # Safely handle list/datetime values
+        creation_date = w.creation_date
+        expiration_date = w.expiration_date
+
+        if isinstance(creation_date, list):
+            creation_date = creation_date[0] if creation_date else None
+
+        if isinstance(expiration_date, list):
+            expiration_date = expiration_date[0] if expiration_date else None
+
+        # Calculate domain age
+        domain_age_days = None
+
+        if isinstance(creation_date, datetime):
+            domain_age_days = (datetime.now() - creation_date).days
+
+        return {
+            "score": 10,
+            "domain_score": "10/10",
+            "domain": domain,
+            "status": "WHOIS data available",
+            "registrar": w.registrar or "Unknown",
+            "creation_date": str(creation_date) if creation_date else "Unknown",
+            "expiration_date": str(expiration_date) if expiration_date else "Unknown",
+            "domain_age_days": domain_age_days
+        }
+
+    except Exception as e:
+        return {
+            "score": 0,
+            "domain_score": "0/10",
+            "domain": "Unknown",
+            "status": "Domain analysis failed",
+            "error": str(e),
+            "registrar": "Unknown",
+            "creation_date": "Unknown",
+            "expiration_date": "Unknown",
+            "domain_age_days": None
+        }
 
 def security_headers_check(final_url):
     score = 0
     import requests
-    response = requests.get(final_url, timeout=10)
-    headers = response.headers
-    csp = headers.get("Content-Security-Policy", "Missing")
-    hsts = headers.get("Strict-Transport-Security", "Missing")
-    xfo = headers.get("X-Frame-Options", "Missing")
-    xcto = headers.get("X-Content-Type-Options", "Missing")
-    referrer = headers.get("Referrer-Policy", "Missing")
-    permissions = headers.get("Permissions-Policy", "Missing")
-    if csp != "Missing": 
-        csp = csp.lower()
-        risky = [
-            "*",
-            "'unsafe-inline'",
-            "'unsafe-eval'"
-        ]
-        secure = [
-            "default-src 'self'",
-            "object-src 'none'",
-            "frame-ancestors",
-            "base-uri"
-        ]
-        weak_count = sum(1 for item in risky if item in csp)
-        strong_count = sum(1 for item in secure if item in csp)
-        if weak_count > 0:
-            score+=2
-            csp_status = "weak"
-        elif strong_count >= 3:
-            score+=7
-            csp_status = "strong"
-        else:
-            score+=4
-            csp_status = "moderate"
-    if hsts != "Missing":
-        score += 4
-    if xfo != "Missing":
-        score += 3
-    if xcto != "Missing":
-        score += 2
-    if referrer != "Missing":
-        score += 2
-    if permissions != "Missing":
-        score += 2
-    return {
-        "score" : score,
-        "security_header_score" : f"{score}/20",
-        "Content-Security-Policy": csp,
-        "Strict-Transport-Security": hsts,
-        "X-Frame-Options": xfo,
-        "X-Content-Type-Options": xcto,
-        "Referrer-Policy": referrer,
-        "Permissions-Policy": permissions
-    }
+    try:
+        response = requests.get(final_url, timeout=10)
+        headers = response.headers
+        csp = headers.get("Content-Security-Policy", "Missing")
+        hsts = headers.get("Strict-Transport-Security", "Missing")
+        xfo = headers.get("X-Frame-Options", "Missing")
+        xcto = headers.get("X-Content-Type-Options", "Missing")
+        referrer = headers.get("Referrer-Policy", "Missing")
+        permissions = headers.get("Permissions-Policy", "Missing")
+        if csp != "Missing": 
+            csp = csp.lower()
+            risky = [
+                "*",
+                "'unsafe-inline'",
+                "'unsafe-eval'"
+            ]
+            secure = [
+                "default-src 'self'",
+                "object-src 'none'",
+                "frame-ancestors",
+                "base-uri"
+            ]
+            weak_count = sum(1 for item in risky if item in csp)
+            strong_count = sum(1 for item in secure if item in csp)
+            if weak_count > 0:
+                score+=2
+                csp_status = "weak"
+            elif strong_count >= 3:
+                score+=7
+                csp_status = "strong"
+            else:
+                score+=4
+                csp_status = "moderate"
+        if hsts != "Missing":
+            score += 4
+        if xfo != "Missing":
+            score += 3
+        if xcto != "Missing":
+            score += 2
+        if referrer != "Missing":
+            score += 2
+        if permissions != "Missing":
+            score += 2
+        return {
+            "score" : score,
+            "security_header_score" : f"{score}/20",
+            "Content-Security-Policy": csp,
+            "Strict-Transport-Security": hsts,
+            "X-Frame-Options": xfo,
+            "X-Content-Type-Options": xcto,
+            "Referrer-Policy": referrer,
+            "Permissions-Policy": permissions
+        }
+    except Exception as e:
+        return {
+            "score" : 0,
+            "security_header_score" : f"{score}/20",
+            "error": str(e)
+        }
 
 def indicators_check(final_url,url):
     score = 15
