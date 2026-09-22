@@ -38,7 +38,7 @@ def developer(data):
             "error": str(e)
         }
 
-    
+
 def install_count(data):
     from google_play_scraper import app
     from datetime import datetime

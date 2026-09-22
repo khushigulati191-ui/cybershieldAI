@@ -2,7 +2,7 @@ import streamlit as st
 import requests,time
 from background import render_background
 from datetime import datetime, timezone
-   
+from database import  save_analysis,get_connection
 render_background()
 st.set_page_config(layout="wide")
 #top margin
@@ -280,6 +280,7 @@ def website_popup():
             time.sleep(2)
             st.session_state["final_url"] = final_url
             st.session_state["url"] = url
+            save_analysis(final_url, "website")
             st.switch_page("pages/web_result.py")
     except Exception as e:
         st.error("Please enter a valid url.")
@@ -322,8 +323,10 @@ def app_popup():
                     st.session_state["os_type"] = os_type
                     st.session_state["app_name"] = app_name
                     if os_type == "Iphone":
+                        save_analysis(app_name, "iphone_app")
                         st.switch_page("pages/iphone_result.py")
                     else:
+                        save_analysis(app_name, "android_app")
                         st.switch_page("pages/android_result.py")
                 else:
                     st.error("No such app found, please enter correct/complete name featured on google play.")
@@ -396,6 +399,7 @@ def compare_popup():
                         if found1 and found2:
                             st.success("Analysis Complete!")
                             time.sleep(2)
+                            save_analysis(f"{first} vs {second}", "app_comparison")
                             st.switch_page("pages/compare.py")
                         else:
                             st.error("No such app found, please enter correct/complete name featured on google play.")
@@ -421,6 +425,7 @@ def compare_popup():
                         if found:
                             st.success("Analysis Complete!")
                             time.sleep(2)
+                            save_analysis(f"{app} on Android vs iOS", "app_os_comparison")
                             st.switch_page("pages/compare.py")
                         else:
                             st.error("No such app found, please enter correct/complete name featured on google play.")
